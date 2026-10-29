@@ -44,3 +44,11 @@ next-env.d.ts
 tools/bayan-art/kenney/
 tools/bayan-art/preview/
 tools/bayan-art/__pycache__/
+
+# Greet the World: downloaded Kenney packs, and the camera runtime and models that mediapipe.mjs fetches
+tools/greet-art/packs/
+public/lessons/lesson-04/greet-the-world/mediapipe/
+
+# Other tools' copies of CLAUDE.md and .claude/skills
+AGENTS.md
+.agents/
