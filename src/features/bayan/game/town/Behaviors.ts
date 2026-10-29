@@ -109,9 +109,7 @@ export class Behaviors {
     const loop = () => {
       if (this.busy(actor)) return this.later(800, loop);
       this.stroll(actor, actor.roam || 1, [1.5, 2], () =>
-        this.later(between([2000, 4000]), () =>
-          this.walk(actor, actor.home, 1.5, () => this.later(between([8000, 15000]), loop)),
-        ),
+        this.later(between([2000, 4000]), () => this.walk(actor, actor.home, 1.5, () => this.later(between([8000, 15000]), loop))),
       );
     };
     this.later(between([6000, 12000]), loop);

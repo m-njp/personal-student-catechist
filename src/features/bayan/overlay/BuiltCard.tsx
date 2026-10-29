@@ -62,7 +62,12 @@ export function BuiltCard({ session, content, sheet }: BuiltCardProps) {
             </span>
           </p>
         )}
-        <button ref={button} type="button" onClick={() => session.director.closeBuilt()} className={actionButton}>
+        <button
+          ref={button}
+          type="button"
+          onClick={() => session.director.closeBuilt()}
+          className={actionButton}
+        >
           Continue
           <ChevronRight aria-hidden className="size-5" strokeWidth={3} />
         </button>

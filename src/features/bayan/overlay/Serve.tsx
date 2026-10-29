@@ -36,10 +36,7 @@ export function ServeBoard({ session, content, entries, sheet }: BoardProps) {
   const written = LOT_IDS.filter((lot) => newest(entries, content.lots[lot].group)).length;
 
   return (
-    <section
-      aria-label="Our promises"
-      className="w-quest max-w-full rounded-2xl border-3 border-gold bg-paper/95 p-3 shadow-game"
-    >
+    <section aria-label="Our promises" className="w-quest max-w-full rounded-2xl border-3 border-gold bg-paper/95 p-3 shadow-game">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -59,11 +56,7 @@ export function ServeBoard({ session, content, entries, sheet }: BoardProps) {
           {LOT_IDS.map((lot) => {
             const { group, starter } = content.lots[lot];
             const entry = newest(entries, group);
-            const art = {
-              backgroundImage: `url(${sheet})`,
-              "--cell": LOT_IDS.indexOf(lot),
-              "--cells": LOT_IDS.length,
-            } as CSSProperties;
+            const art = { backgroundImage: `url(${sheet})`, "--cell": LOT_IDS.indexOf(lot), "--cells": LOT_IDS.length } as CSSProperties;
             return (
               <li key={lot} className="flex items-center gap-2">
                 <div aria-hidden className="building-art building-thumb shrink-0" style={art} />
@@ -76,11 +69,7 @@ export function ServeBoard({ session, content, entries, sheet }: BoardProps) {
           })}
         </ul>
       )}
-      <button
-        type="button"
-        onClick={() => session.ui.setState({ writing: true })}
-        className={`mt-3 w-full justify-center ${actionButton}`}
-      >
+      <button type="button" onClick={() => session.ui.setState({ writing: true })} className={`mt-3 w-full justify-center ${actionButton}`}>
         <PenLine aria-hidden className="size-4" />
         Write our sentence
       </button>

@@ -31,12 +31,7 @@ export class Traffic {
     calm: boolean,
   ) {
     if (!scene.anims.exists("jeepney")) {
-      scene.anims.create({
-        key: "jeepney",
-        frames: scene.anims.generateFrameNumbers(KEY.vehicles, { start: 0, end: 1 }),
-        frameRate: 5,
-        repeat: -1,
-      });
+      scene.anims.create({ key: "jeepney", frames: scene.anims.generateFrameNumbers(KEY.vehicles, { start: 0, end: 1 }), frameRate: 5, repeat: -1 });
     }
     this.start = lane.x * TILE - VEHICLE.width;
     this.end = (lane.x + lane.width) * TILE;

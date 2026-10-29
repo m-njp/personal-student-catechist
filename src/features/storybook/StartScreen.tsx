@@ -1,9 +1,8 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
+import { readNumberToken as timing } from "@/lib/tokens";
 import { PulseButton } from "./PulseButton";
 
 interface StartScreenProps {

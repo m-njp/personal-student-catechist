@@ -153,9 +153,7 @@ describe("Director, Stage 1", () => {
 
   it("shows a finished stage's closing card when the class comes back to it", () => {
     const { director, ui, saved } = setup();
-    saved.setState({
-      progress: { ...saved.getState().progress, openingSeen: true, answered: { house: 3, school: 3, hall: 3, church: 3 } },
-    });
+    saved.setState({ progress: { ...saved.getState().progress, openingSeen: true, answered: { house: 3, school: 3, hall: 3, church: 3 } } });
     director.start();
     expect(ui.getState().dialog?.beats.at(-1)).toEqual({ kind: "card", card: bayan.stages[0].end });
   });
@@ -217,10 +215,7 @@ describe("Director, Stages 2 to 5", () => {
     const { director, ui, saved, types } = setup();
     director.goToStage(2);
     director.interact(leader("church"));
-    expect(ui.getState().dialog?.beats).toContainEqual({
-      kind: "card",
-      card: { title: bayan.verse.reference, body: bayan.verse.text },
-    });
+    expect(ui.getState().dialog?.beats).toContainEqual({ kind: "card", card: { title: bayan.verse.reference, body: bayan.verse.text } });
     playThrough(director, ui);
     expect(saved.getState().progress.verseSeen).toBe(true);
     expect(ui.getState().closeUp).toBe(true);

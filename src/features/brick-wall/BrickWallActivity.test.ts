@@ -65,9 +65,12 @@ describe("BrickWallActivity", () => {
       expect(layAll(make({ order: [3, 6, 1, 2, 5, 4] }))).toEqual([3, 6, 1, 2, 5, 4]);
     });
 
-    it.each([[[1, 2, 3]], [[1, 1, 2, 3, 4, 5]], [[0, 1, 2, 3, 4, 5]], [[1, 2, 3, 4, 5, 7]]])("refuses the order %j", (order) => {
-      expect(() => make({ order })).toThrow();
-    });
+    it.each([[[1, 2, 3]], [[1, 1, 2, 3, 4, 5]], [[0, 1, 2, 3, 4, 5]], [[1, 2, 3, 4, 5, 7]]])(
+      "refuses the order %j",
+      (order) => {
+        expect(() => make({ order })).toThrow();
+      },
+    );
   });
 
   describe("placing", () => {

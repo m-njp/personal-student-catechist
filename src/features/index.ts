@@ -4,3 +4,4 @@ import "./brick-wall/register";
 import "./bayan/register";
 import "./bayanihan/register";
 import "./gifts/register";
+import "./greet-the-world/register";

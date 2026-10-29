@@ -42,11 +42,7 @@ export function QuestCard({ session, content }: { session: BayanSession; content
           </span>
           <span className="pixel block text-game lowercase">{stage.title}</span>
         </span>
-        {open ? (
-          <ChevronUp aria-hidden className="mt-1 size-5 shrink-0" />
-        ) : (
-          <ChevronDown aria-hidden className="mt-1 size-5 shrink-0" />
-        )}
+        {open ? <ChevronUp aria-hidden className="mt-1 size-5 shrink-0" /> : <ChevronDown aria-hidden className="mt-1 size-5 shrink-0" />}
       </button>
       <p className="mt-1 text-game-small">{stage.instructions}</p>
       {progress.stage > 1 && <Tally progress={progress} />}

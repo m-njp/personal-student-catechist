@@ -1,7 +1,5 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { AnimatePresence, motion } from "motion/react";
 import { memo, type CSSProperties } from "react";
 import { giftColor } from "@/features/storybook/cast";
@@ -9,6 +7,7 @@ import { GIFT_ICONS } from "@/features/storybook/art/icons";
 import { PaperGrain } from "@/features/storybook/art/PaperDefs";
 import { INK, LINE, paper } from "@/features/storybook/art/paper";
 import { Burst } from "@/features/storybook/Burst";
+import { readNumberToken as timing } from "@/lib/tokens";
 import { BarangayPicture, CELLS, COLS, PICTURE_HEIGHT, PICTURE_WIDTH, ROWS } from "./barangay";
 import type { RoundGift } from "./content";
 import { piecePath } from "./jigsaw";

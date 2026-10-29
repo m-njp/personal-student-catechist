@@ -37,7 +37,13 @@ export function StartScreen({ session, content, fullscreen }: StartScreenProps) 
           <ControlsText />
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <button ref={start} type="button" disabled={!ready} onClick={() => session.director.start()} className={bigButton}>
+          <button
+            ref={start}
+            type="button"
+            disabled={!ready}
+            onClick={() => session.director.start()}
+            className={bigButton}
+          >
             <Play aria-hidden className="size-5" />
             {!ready ? "Opening our bayan" : begun ? "Continue" : "Start"}
           </button>

@@ -1,7 +1,5 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { useDroppable } from "@dnd-kit/core";
 import { MusicNote, MusicNotes } from "@phosphor-icons/react";
 import { motion, type TargetAndTransition, type Transition } from "motion/react";
@@ -13,6 +11,7 @@ import { INK } from "@/features/storybook/art/paper";
 import { Prop } from "@/features/storybook/art/props";
 import { Token } from "@/features/storybook/art/Token";
 import { Burst } from "@/features/storybook/Burst";
+import { readNumberToken as timing } from "@/lib/tokens";
 import type { Timings } from "@/features/storybook/useStory";
 import type { Job, Scenario, Worker } from "./content";
 import type { Phase } from "./rules";

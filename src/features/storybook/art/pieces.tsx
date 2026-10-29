@@ -145,19 +145,7 @@ export function MangoTree({ x, y, s = 1 }: { x: number; y: number; s?: number })
 }
 
 /** A string of banderitas, the small fiesta flags, hanging from x1 to x2 with a gentle sag. */
-export function Banderitas({
-  x1,
-  x2,
-  y,
-  sag = 50,
-  count = 14,
-}: {
-  x1: number;
-  x2: number;
-  y: number;
-  sag?: number;
-  count?: number;
-}) {
+export function Banderitas({ x1, x2, y, sag, count }: { x1: number; x2: number; y: number; sag: number; count: number }) {
   const colors = [...WORKER_GIFTS.map(giftColor), giftColor("teaching"), giftColor("praying")];
   const at = (t: number) => ({ x: x1 + (x2 - x1) * t, y: y + sag * 4 * t * (1 - t) });
   return (
@@ -174,7 +162,7 @@ export function Banderitas({
 }
 
 /** A potted plant. `x` and `y` are the foot of the pot. */
-export function Plant({ x, y, s = 1, pot = "clay" }: { x: number; y: number; s?: number; pot?: "clay" | "wood" }) {
+export function Plant({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
       <g fill={paper("leaf")}>
@@ -182,8 +170,8 @@ export function Plant({ x, y, s = 1, pot = "clay" }: { x: number; y: number; s?:
         <ellipse cx="22" cy="-72" rx="14" ry="38" transform="rotate(30 22 -72)" />
       </g>
       <ellipse cx="0" cy="-88" rx="15" ry="44" fill={paper("leaf-dark")} />
-      <path d="M-32 -46 L32 -46 L24 0 L-24 0 Z" fill={paper(pot)} />
-      <rect x="-36" y="-52" width="72" height="12" rx="4" fill={paper(pot)} />
+      <path d="M-32 -46 L32 -46 L24 0 L-24 0 Z" fill={paper("clay")} />
+      <rect x="-36" y="-52" width="72" height="12" rx="4" fill={paper("clay")} />
     </g>
   );
 }

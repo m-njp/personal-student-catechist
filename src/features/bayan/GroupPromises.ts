@@ -12,8 +12,6 @@ export class GroupPromises implements Promises {
   /** Removes only the groups' sentences. Reflections pupils wrote themselves stay. */
   async clear(): Promise<void> {
     const entries = await this.repository.listByLesson(this.lessonId);
-    await Promise.all(
-      entries.filter((entry) => this.groups.includes(entry.pupilName)).map((entry) => this.repository.delete(entry.id)),
-    );
+    await Promise.all(entries.filter((entry) => this.groups.includes(entry.pupilName)).map((entry) => this.repository.delete(entry.id)));
   }
 }

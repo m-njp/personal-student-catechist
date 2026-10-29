@@ -1,12 +1,11 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { useDraggable } from "@dnd-kit/core";
 import { motion } from "motion/react";
 import { memo } from "react";
 import { giftColor, type Expression, type WorkerGift } from "@/features/storybook/cast";
 import { Token } from "@/features/storybook/art/Token";
+import { readNumberToken as timing } from "@/lib/tokens";
 import type { Worker } from "./content";
 
 interface CardProps {

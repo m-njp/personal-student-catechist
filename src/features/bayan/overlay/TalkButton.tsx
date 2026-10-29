@@ -60,7 +60,11 @@ export function TalkButton({ session, content }: { session: BayanSession; conten
   const { text, Icon } = labelOf(near, content);
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-game-gap">
-      <button type="button" onClick={talk} className={`pointer-events-auto animate-bob ${bigButton}`}>
+      <button
+        type="button"
+        onClick={talk}
+        className={`pointer-events-auto animate-bob ${bigButton}`}
+      >
         <Icon aria-hidden className="size-6" />
         {text}
         <kbd className="hidden rounded-md border border-ink/30 px-2 text-game-small md:inline">Enter</kbd>

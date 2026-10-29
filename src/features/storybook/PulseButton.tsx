@@ -1,8 +1,7 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { motion } from "motion/react";
+import { readNumberToken as timing } from "@/lib/tokens";
 import { bigButton } from "./styles";
 
 /** The one big action on screen, such as Go or Next, pulsing so the class knows what comes next. */

@@ -64,31 +64,16 @@ export class TownScene extends WalkScene {
       if (!person) throw new Error(`The map has "${id}", but the lesson does not say who that is.`);
       return person.sprite;
     };
-    cast.add({
-      id: PLAYER,
-      kind: "pupil",
-      look: look(objects.spawn.id),
-      at: start.from === "church" ? objects.door : objects.spawn,
-    });
+    cast.add({ id: PLAYER, kind: "pupil", look: look(objects.spawn.id), at: start.from === "church" ? objects.door : objects.spawn });
     const { guide, vendor } = objects;
     cast.add({ id: guide.id, kind: "guide", look: look(guide.id), at: guide, behavior: guide.behavior });
-    for (const l of objects.leaders)
-      cast.add({ id: l.id, kind: "leader", look: look(l.id), at: l, behavior: l.behavior, lot: l.lotId });
+    for (const l of objects.leaders) cast.add({ id: l.id, kind: "leader", look: look(l.id), at: l, behavior: l.behavior, lot: l.lotId });
     for (const v of objects.villagers) {
       cast.add({ id: v.id, kind: "villager", look: look(v.id), at: v, behavior: v.behavior, lot: v.lotId, holds: v.holds });
     }
-    for (const f of objects.townsfolk)
-      cast.add({ id: f.id, kind: "townsfolk", look: look(f.id), at: f, behavior: f.behavior, roam: f.roam });
-    cast.add({
-      id: vendor.id,
-      kind: "vendor",
-      look: look(vendor.id),
-      at: vendor,
-      behavior: vendor.behavior,
-      holds: vendor.holds,
-    });
-    for (const a of objects.animals)
-      cast.add({ id: a.id, kind: "animal", look: look(a.id), at: a, behavior: a.behavior, roam: a.roam });
+    for (const f of objects.townsfolk) cast.add({ id: f.id, kind: "townsfolk", look: look(f.id), at: f, behavior: f.behavior, roam: f.roam });
+    cast.add({ id: vendor.id, kind: "vendor", look: look(vendor.id), at: vendor, behavior: vendor.behavior, holds: vendor.holds });
+    for (const a of objects.animals) cast.add({ id: a.id, kind: "animal", look: look(a.id), at: a, behavior: a.behavior, roam: a.roam });
     for (const p of objects.plaques) cast.add({ id: p.id, kind: "plaque", look: "plaque", at: p, index: p.index });
     cast.start(this.gridEngine, map);
 
@@ -178,8 +163,7 @@ export class TownScene extends WalkScene {
     const progress = this.deps.session.saved.getState().progress;
     if (progress.stage < 3) return null;
     // The statue's own tiles count too, so tapping it walks the pupil to its foot.
-    const atStatue =
-      tile.x >= statue.x && tile.x < statue.x + statue.width && tile.y >= statue.y && tile.y < statue.y + statue.height;
+    const atStatue = tile.x >= statue.x && tile.x < statue.x + statue.width && tile.y >= statue.y && tile.y < statue.y + statue.height;
     if (atStatue) return { kind: "statue", id: statue.id };
     return progress.peterSeen && tile.x === door.x && tile.y === door.y ? { kind: "door", id: door.id } : null;
   }

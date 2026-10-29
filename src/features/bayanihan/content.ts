@@ -61,5 +61,8 @@ export interface BayanihanContent {
   endQuestion: string;
   /** Read by screen readers for the stars. `{done}` and `{total}` become numbers. */
   progress: string;
+  /** The teacher panel's heading for the places, and its replay button. */
+  jumpTitle: string;
+  replay: string;
   scenarios: readonly Scenario[];
 }

@@ -145,8 +145,7 @@ export class Construction {
     const building = this.layers.get(`${lot}-built`);
     const area = this.area(lot);
     if (!site || !building || !area) return;
-    const clearSite = () =>
-      this.scene.tweens.add({ targets: site, alpha: 0, duration: 300, onComplete: () => site.setVisible(false) });
+    const clearSite = () => this.scene.tweens.add({ targets: site, alpha: 0, duration: 300, onComplete: () => site.setVisible(false) });
     this.build(lot, area, building, clearSite);
   }
 
@@ -164,17 +163,9 @@ export class Construction {
     layer.setVisible(true).setAlpha(1);
     for (const tile of rows.flat()) tile.setVisible(false);
 
-    const scaffold = rows
-      .flat()
-      .map((tile) =>
-        this.keep(
-          this.scene.add
-            .sprite(tile.pixelX, tile.pixelY, KEY.extraFrames, this.frames.extra("scaffold"))
-            .setOrigin(0)
-            .setDepth(DEPTH.scaffold)
-            .setAlpha(0),
-        ),
-      );
+    const scaffold = rows.flat().map((tile) =>
+      this.keep(this.scene.add.sprite(tile.pixelX, tile.pixelY, KEY.extraFrames, this.frames.extra("scaffold")).setOrigin(0).setDepth(DEPTH.scaffold).setAlpha(0)),
+    );
     this.after(BEAT.scaffold, () => {
       clearSite();
       this.sounds.play("hammer");
@@ -196,12 +187,7 @@ export class Construction {
 
     const done = BEAT.firstRow + rows.length * BEAT.row;
     this.after(done, () => {
-      this.scene.tweens.add({
-        targets: scaffold,
-        alpha: 0,
-        duration: 300,
-        onComplete: () => scaffold.forEach((s) => this.drop(s)),
-      });
+      this.scene.tweens.add({ targets: scaffold, alpha: 0, duration: 300, onComplete: () => scaffold.forEach((s) => this.drop(s)) });
       this.sounds.play("rise");
     });
     this.after(done + BEAT.cheer, () => {

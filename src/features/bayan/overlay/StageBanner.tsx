@@ -27,7 +27,10 @@ export function StageBanner({ session, content }: { session: BayanSession; conte
   if (stage === null) return null;
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-game-gap">
-      <p role="status" className="animate-rise-in rounded-2xl border-2 border-ink bg-gold px-8 py-5 text-center shadow-game">
+      <p
+        role="status"
+        className="animate-rise-in rounded-2xl border-2 border-ink bg-gold px-8 py-5 text-center shadow-game"
+      >
         <span className="block text-game-small uppercase tracking-label">Stage {stage} complete</span>
         <span className="pixel block text-game-title lowercase">{content.stages[stage - 1].title}</span>
       </p>

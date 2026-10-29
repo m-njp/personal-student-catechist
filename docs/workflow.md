@@ -59,7 +59,7 @@ Development is on Windows PowerShell 5.1. The hooks run in Git Bash, but the com
 | `$(...)` and `VAR=1 cmd` are bash only | Use `$env:NAME = '1'; cmd; Remove-Item Env:NAME`, and put output in a variable first. |
 | Red "NativeCommandError" from npm, vitest, or git | Usually a harmless warning on stderr. Do not add `2>&1`. Check `$LASTEXITCODE`. |
 | `ConvertFrom-Json` fails on `package-lock.json` | Read it with `node -e`. |
-| `gh` is not installed | Open pull requests from `https://github.com/drSabine/personal-student-catechist/compare/staging...<branch>?expand=1`. |
+| `gh` is not installed | Open pull requests from `https://github.com/m-njp/personal-student-catechist/compare/staging...<branch>?expand=1`. |
 | A new branch starts behind | `git fetch origin --prune` and `git pull --ff-only` on `staging` first. |
 | `git branch -d` says "not fully merged" | Squash merges do that. Confirm with `git merge-base --is-ancestor <branch> origin/main` (exit 0) or the merged pull request, then `git branch -D`. |
 | "LF will be replaced by CRLF" | Harmless. `.gitattributes` keeps LF. Never save `.githooks/` files with CRLF. |

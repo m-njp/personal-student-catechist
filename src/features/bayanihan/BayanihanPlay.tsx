@@ -15,8 +15,8 @@ import { LayoutGroup } from "motion/react";
 import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
 import { WORKER_GIFTS, type Expression, type WorkerGift } from "@/features/storybook/cast";
 import { Token } from "@/features/storybook/art/Token";
-import { Say } from "@/features/storybook/Say";
 import { Bobbing } from "@/features/storybook/StartScreen";
+import { StoryBoard } from "@/features/storybook/StoryBoard";
 import { StoryPlay, type Stage } from "@/features/storybook/StoryPlay";
 import { PulseButton } from "@/features/storybook/PulseButton";
 import { useSaved } from "@/features/storybook/useGame";
@@ -50,8 +50,8 @@ export function BayanihanPlay({ activity, lessonId }: BayanihanPlayProps) {
 
   return (
     <StoryPlay
-      game={game}
-      sounds={activity.sounds}
+      activity={activity}
+      lessonId={lessonId}
       cover={{
         title: content.title,
         tagline: content.tagline,
@@ -59,15 +59,14 @@ export function BayanihanPlay({ activity, lessonId }: BayanihanPlayProps) {
         art: <Cover art={content.scenarios[0].art} />,
         cast,
       }}
-      jumpTitle="Go to place"
+      jumpTitle={content.jumpTitle}
       jumps={content.scenarios.map((s, index) => ({
         label: s.title,
         current: index === scenario,
         onSelect: () => game.dispatch({ type: "jump", scenario: index }),
       }))}
-      replayLabel="Replay this place"
+      replayLabel={content.replay}
       onReplay={() => game.dispatch({ type: "jump", scenario })}
-      onReset={() => game.dispatch({ type: "reset" })}
     >
       {(stage) => <Round key={attempt} activity={activity} game={game} stage={stage} />}
     </StoryPlay>
@@ -228,6 +227,7 @@ function Round({ activity, game, stage: { play, fire } }: RoundProps) {
   const speaker = shown.speaker === "leader" ? content.leader : workerOf(shown.speaker);
   const speakerFace: Expression = shown.speaker === "leader" ? (settled ? "lovingGrin1" : "explaining") : faces[shown.speaker];
   const draggedWorker = dragging ? workerOf(dragging) : undefined;
+  const done = scenesDone(progress);
 
   return (
     speaker && (
@@ -240,20 +240,15 @@ function Round({ activity, game, stage: { play, fire } }: RoundProps) {
       >
         {/* Each run of a place has its own tokens, so none fly in from where the last place left them. */}
         <LayoutGroup id={`run-${progress.attempt}`}>
-          <div className="absolute inset-0 flex flex-col gap-story-gap p-story-gap">
-            <div className="flex flex-col gap-story-gap @3xl:min-h-strip-token @3xl:flex-row @3xl:items-center @3xl:pr-corner">
-              <div className="min-w-0 flex-1">
-                <Say look={speaker.look} gift={speaker.gift} face={speakerFace} name={speaker.name} text={shown.text} />
-              </div>
-              <CrewProgress
-                done={scenesDone(progress)}
-                total={content.scenarios.length}
-                title={scenario.title}
-                gifts={WORKER_GIFTS}
-                placed={progress.placed}
-                label={content.progress}
-              />
-            </div>
+          <StoryBoard
+            speaker={speaker}
+            face={speakerFace}
+            text={shown.text}
+            label={content.progress}
+            done={done}
+            total={content.scenarios.length}
+            progress={<CrewProgress done={done} total={content.scenarios.length} title={scenario.title} placed={progress.placed} />}
+          >
             <div className="flex min-h-0 flex-1 flex-col gap-story-gap @3xl:flex-row">
               <div className="flex min-h-0 flex-1 items-center justify-center [container-type:size]">
                 <Scene
@@ -284,7 +279,7 @@ function Round({ activity, game, stage: { play, fire } }: RoundProps) {
                 onSelect={onSelect}
               />
             </div>
-          </div>
+          </StoryBoard>
           <DragOverlay>
             {draggedWorker && (
               <Token

@@ -1,9 +1,8 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { Sparkle } from "@phosphor-icons/react";
 import { motion } from "motion/react";
+import { readNumberToken as timing } from "@/lib/tokens";
 
 const SPARKS = 10;
 

@@ -78,5 +78,8 @@ export interface GiftsContent {
   poster: readonly [string, string];
   /** Read by screen readers for the gift badges. `{done}` and `{total}` become numbers. */
   progress: string;
+  /** The teacher panel's heading for the gifts, and its replay button. */
+  jumpTitle: string;
+  replay: string;
   rounds: readonly Round[];
 }

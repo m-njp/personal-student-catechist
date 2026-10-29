@@ -70,6 +70,8 @@ export const bayanihan: BayanihanContent = {
   next: "Next",
   endQuestion: "What helped us finish all three tasks?",
   progress: "{done} of {total} places ready",
+  jumpTitle: "Go to place",
+  replay: "Replay this place",
   scenarios: [
     {
       art: "brigada",
@@ -137,6 +139,8 @@ export const gifts: GiftsContent = {
   pictureAlt: "Our barangay working together in front of the church.",
   poster: ["Keep our", "barangay clean"],
   progress: "{done} of {total} gifts found",
+  jumpTitle: "Go to gift",
+  replay: "Replay this gift",
   rounds: [
     {
       gift: "hands",

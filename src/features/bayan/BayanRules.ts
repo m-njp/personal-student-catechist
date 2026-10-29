@@ -51,7 +51,10 @@ export function sanitizeProgress(value: unknown): BayanProgress {
   if (typeof value !== "object" || value === null) return start;
   const raw = value as Record<string, unknown>;
   const answered = { ...start.answered };
-  const rawAnswered = (typeof raw.answered === "object" && raw.answered !== null ? raw.answered : {}) as Record<string, unknown>;
+  const rawAnswered = (typeof raw.answered === "object" && raw.answered !== null ? raw.answered : {}) as Record<
+    string,
+    unknown
+  >;
   // An older save asked more questions per lot; a lot it finished stays finished.
   for (const lot of LOT_IDS) answered[lot] = Math.min(wholeNumber(rawAnswered[lot], 0, 9) ?? 0, QUESTIONS_PER_LOT);
   return {
@@ -112,9 +115,7 @@ export function stageGoalMet(progress: BayanProgress): boolean {
  */
 export function jumpTo(progress: BayanProgress, stage: Stage): BayanProgress {
   const done = (s: Stage) => stage > s;
-  const answered = done(1)
-    ? { house: QUESTIONS_PER_LOT, school: QUESTIONS_PER_LOT, hall: QUESTIONS_PER_LOT, church: QUESTIONS_PER_LOT }
-    : initialProgress().answered;
+  const answered = done(1) ? { house: QUESTIONS_PER_LOT, school: QUESTIONS_PER_LOT, hall: QUESTIONS_PER_LOT, church: QUESTIONS_PER_LOT } : initialProgress().answered;
   return {
     ...initialProgress(),
     stage,

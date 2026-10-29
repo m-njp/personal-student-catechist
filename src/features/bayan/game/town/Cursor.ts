@@ -48,13 +48,7 @@ export class Cursor {
     mark.fillRect(tile.x * TILE, tile.y * TILE, TILE, TILE);
     mark.lineStyle(2, this.palette.blocked, 1);
     cross(mark, tile, this.palette.blocked, 1);
-    this.scene.tweens.add({
-      targets: mark,
-      alpha: 0,
-      delay: BUMP_MS / 2,
-      duration: BUMP_MS / 2,
-      onComplete: () => mark.destroy(),
-    });
+    this.scene.tweens.add({ targets: mark, alpha: 0, delay: BUMP_MS / 2, duration: BUMP_MS / 2, onComplete: () => mark.destroy() });
   }
 }
 

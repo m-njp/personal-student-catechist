@@ -10,3 +10,7 @@ export const bigButton =
 /** A round corner button, such as the teacher panel or full screen. */
 export const cornerButton =
   "inline-flex size-11 items-center justify-center rounded-full border-2 border-ink bg-paper shadow-story hover:bg-wash";
+
+/** A row in the teacher panel, and the small heading over a group of rows. */
+export const panelRow = "flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-left text-sm hover:bg-wash";
+export const panelLabel = "px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted";

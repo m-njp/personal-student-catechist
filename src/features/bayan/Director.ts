@@ -135,9 +135,7 @@ export class Director {
     const question = questionIn(this.content, beat.set, beat.question);
 
     const result =
-      beat.set === "reveal"
-        ? answerPart(this.progress, choice, this.content)
-        : answer(this.progress, beat.set, choice, this.content);
+      beat.set === "reveal" ? answerPart(this.progress, choice, this.content) : answer(this.progress, beat.set, choice, this.content);
     if (!result.correct) {
       const hint = question.choices[choice]?.hint ?? null;
       this.ui.setState({ dialog: { ...dialog, tried: [...dialog.tried, choice], hint } });

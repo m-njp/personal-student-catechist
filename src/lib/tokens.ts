@@ -6,8 +6,8 @@ export function readToken(name: `--${string}`): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-/** A number token, such as a timing in milliseconds, or `fallback` when it is missing. */
-export function readNumberToken(name: `--${string}`, fallback = 0): number {
+/** A number token, such as a timing in milliseconds, or 0 when it is missing. */
+export function readNumberToken(name: `--${string}`): number {
   const value = Number.parseFloat(readToken(name));
-  return Number.isFinite(value) ? value : fallback;
+  return Number.isFinite(value) ? value : 0;
 }

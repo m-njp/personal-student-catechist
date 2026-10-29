@@ -29,7 +29,7 @@ This machine runs Windows PowerShell 5.1 and has no `gh`. Run one command per li
 3. Give the user this link to open the pull request (base `main`, head `staging`), titled `chore(release): <short summary>`, with the list from step 2 in the description:
 
    ```
-   https://github.com/drSabine/personal-student-catechist/compare/main...staging?expand=1
+   https://github.com/m-njp/personal-student-catechist/compare/main...staging?expand=1
    ```
 
    If the release adds a Vercel integration or environment variables, check they are set for Production before merging, or the live site errors where that feature is used.

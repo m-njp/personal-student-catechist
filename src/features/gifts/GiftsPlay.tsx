@@ -1,7 +1,5 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { motion } from "motion/react";
 import { memo, useEffect, useEffectEvent, useMemo, useState } from "react";
 import { giftColor, type Expression } from "@/features/storybook/cast";
@@ -10,12 +8,13 @@ import { INK, paper } from "@/features/storybook/art/paper";
 import { Banderitas, Cloud } from "@/features/storybook/art/pieces";
 import { Token } from "@/features/storybook/art/Token";
 import { Burst } from "@/features/storybook/Burst";
-import { Say } from "@/features/storybook/Say";
 import { Bobbing } from "@/features/storybook/StartScreen";
+import { StoryBoard } from "@/features/storybook/StoryBoard";
 import { StoryPlay, type Stage } from "@/features/storybook/StoryPlay";
 import { PulseButton } from "@/features/storybook/PulseButton";
 import { card } from "@/features/storybook/styles";
 import { useSaved } from "@/features/storybook/useGame";
+import { readNumberToken as timing } from "@/lib/tokens";
 import type { Round, RoundGift } from "./content";
 import type { GiftsActivity, GiftsGame } from "./GiftsActivity";
 import { PICTURES } from "./pictures";
@@ -48,8 +47,8 @@ export function GiftsPlay({ activity, lessonId }: GiftsPlayProps) {
 
   return (
     <StoryPlay
-      game={game}
-      sounds={activity.sounds}
+      activity={activity}
+      lessonId={lessonId}
       cover={{
         title: content.title,
         tagline: content.tagline,
@@ -57,15 +56,14 @@ export function GiftsPlay({ activity, lessonId }: GiftsPlayProps) {
         art: <Cover />,
         cast,
       }}
-      jumpTitle="Go to gift"
+      jumpTitle={content.jumpTitle}
       jumps={content.rounds.map((r, index) => ({
         label: r.word,
         current: index === round,
         onSelect: () => game.dispatch({ type: "jump", round: index }),
       }))}
-      replayLabel="Replay this gift"
+      replayLabel={content.replay}
       onReplay={() => game.dispatch({ type: "jump", round })}
-      onReset={() => game.dispatch({ type: "reset" })}
     >
       {(stage) => <Board key={attempt} activity={activity} game={game} stage={stage} />}
     </StoryPlay>
@@ -204,20 +202,21 @@ function Board({ activity, game, stage: { play, fire } }: BoardProps) {
   const choices = goodFirst(index) ? [true, false] : [false, true];
 
   return (
-    <div className="absolute inset-0 flex flex-col gap-story-gap p-story-gap">
-      <div className="flex flex-col gap-story-gap @3xl:min-h-strip-token @3xl:flex-row @3xl:items-center @3xl:pr-corner">
-        <div className="min-w-0 flex-1">
-          <Say look={content.guide.look} gift={content.guide.gift} face={face} name={content.guide.name} text={said} />
-        </div>
-        <div
-          className="order-first flex min-h-11 shrink-0 flex-wrap items-center gap-1 pr-corner @3xl:order-none @3xl:pr-0"
-          aria-label={content.progress.replace("{done}", String(placed)).replace("{total}", String(gifts.length))}
-        >
+    <StoryBoard
+      speaker={content.guide}
+      face={face}
+      text={said}
+      label={content.progress}
+      done={placed}
+      total={gifts.length}
+      progress={
+        <div className="flex flex-wrap items-center gap-1">
           {gifts.map((gift, i) => (
             <GiftBadge key={gift} gift={gift} lit={i < placed} current={i === index && !ending && i >= placed} />
           ))}
         </div>
-      </div>
+      }
+    >
       <div className="flex min-h-0 flex-1 flex-col gap-story-gap overflow-y-auto @3xl:flex-row @3xl:overflow-hidden">
         <section className="flex shrink-0 flex-col items-center gap-story-gap @3xl:min-h-0 @3xl:flex-1 @3xl:shrink @3xl:justify-center">
           {ending ? (
@@ -306,6 +305,6 @@ function Board({ activity, game, stage: { play, fire } }: BoardProps) {
           />
         </section>
       </div>
-    </div>
+    </StoryBoard>
   );
 }

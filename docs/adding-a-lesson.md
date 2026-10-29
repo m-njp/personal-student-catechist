@@ -31,10 +31,14 @@ A lesson can hold several activities. Numbered buttons then appear to switch bet
 2. Draw it in `src/features/bayanihan/scenes/`, as `brigada.tsx` does: a still backdrop, the parts that move (`ambient`, each with a box and a kind of movement), and for each job its mess, its clean look, its tag spot, and where the worker stands. Scenes are drawn on a 1600 by 900 sheet.
 3. Add one line to `scenes/index.ts`.
 
-Use the paper colors in `paper.ts` and the shared pieces in `storybook/art/pieces.tsx`, so the new scene matches. Put the paper filter (`CUT`) only on groups that never move.
+Use the paper colors in `src/features/storybook/art/paper.ts` and the shared pieces in `storybook/art/pieces.tsx`, so the new scene matches. Put the paper filter (`CUT`) only on groups that never move.
 
 ## A game like Build Our Bayan
 
 - Words live in the lesson's content file (`lesson-02/bayan.ts`): every line, question, hint, and person's name. Scenes hold no lesson text.
 - Positions live in the map, which `tools/bayan-art/gen_maps.py` writes. Each person is an object whose name is their id; the content file says who that id is and how they look, and the object's `behavior` says how they move.
 - Progress is saved for the class (see `docs/game-saves.md`), so the teacher resets the town from the game's teacher panel before a new class.
+
+## A question for Greet the World
+
+Add it to `questions` in Lesson 04's `greet.ts`, where it plays in that order. A true or false or an A, B, C question uses thumbs or fingers unless it names its own `signs`; a pose names one action. Use only signs the detector reads, and the Setup check tries every sign the questions use. Keep a question to one short line and a choice to a few words: the card is a narrow column beside the camera, and `content.test.ts` holds the limits.

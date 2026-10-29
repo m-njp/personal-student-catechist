@@ -53,7 +53,9 @@ export function BrickWallView({ activity }: ActivityViewProps<BrickWallActivity>
 
   return (
     <div
-      className={floating ? "fixed inset-0 z-50 flex flex-col bg-paper lg:flex-row" : "flex min-h-0 flex-1 flex-col lg:flex-row"}
+      className={
+        floating ? "fixed inset-0 z-50 flex flex-col bg-paper lg:flex-row" : "flex min-h-0 flex-1 flex-col lg:flex-row"
+      }
     >
       <Stage
         aspect={activity.photo.width / activity.photo.height}
@@ -106,7 +108,11 @@ export function BrickWallView({ activity }: ActivityViewProps<BrickWallActivity>
 
         <div className="flex items-center gap-2">
           {showDetails && (
-            <Button variant={snapshot.complete ? "solid" : "quiet"} onClick={handleReset} className="flex-1 lg:flex-none lg:px-6">
+            <Button
+              variant={snapshot.complete ? "solid" : "quiet"}
+              onClick={handleReset}
+              className="flex-1 lg:flex-none lg:px-6"
+            >
               <RotateCcw aria-hidden className="size-4" />
               {snapshot.complete ? "Build again" : "Reset"}
             </Button>

@@ -7,42 +7,58 @@ import { useFullscreen } from "@/hooks/useFullscreen";
 import { PaperDefs } from "./art/PaperDefs";
 import { storyFonts } from "./fonts";
 import { StartScreen } from "./StartScreen";
-import type { StoryGame } from "./StoryGame";
+import type { StoryActivity } from "./StoryActivity";
 import { cornerButton } from "./styles";
 import { TeacherPanel, type Jump } from "./TeacherPanel";
 import { useHydrated, useSaved, useSaveStatus } from "./useGame";
-import { useSfx, type SfxFiles, type SfxName } from "./useSfx";
+import { useSfx, type SfxName } from "./useSfx";
 import { useConfetti } from "./useStory";
 
 /** What a game's board gets from the shell. */
-export interface Stage {
-  play: (name: SfxName) => void;
-  fire: () => void;
+export interface Stage<TSound extends string = SfxName> {
+  play: (name: TSound) => void;
+  fire: (colors?: readonly string[]) => void;
 }
 
-interface StoryPlayProps<TProgress, TAction> {
-  game: StoryGame<TProgress, TAction>;
-  sounds: SfxFiles;
-  cover: { title: string; tagline: string; play: string; art: ReactNode; cast: ReactNode };
+/** The standard cover with one Play button. */
+interface Cover {
+  title: string;
+  tagline: string;
+  play: string;
+  art: ReactNode;
+  cast: ReactNode;
+}
+
+interface StoryPlayProps<TContent, TProgress, TAction, TOutcome, TSound extends string> {
+  activity: StoryActivity<TContent, TProgress, TAction, TOutcome, TSound>;
+  lessonId: string;
+  /** The standard cover, or a game's own that calls `start` from its buttons. */
+  cover: Cover | ((start: () => void) => ReactNode);
   jumpTitle: string;
   jumps: readonly Jump[];
   replayLabel: string;
   onReplay: () => void;
-  onReset: () => void;
-  children: (stage: Stage) => ReactNode;
+  /** Extra teacher controls, shown in the teacher panel. */
+  teacher?: ReactNode;
+  /** The game's own fonts, background, and text color. Lesson 03's paper board when left out. */
+  look?: string;
+  children: (stage: Stage<TSound | "select">) => ReactNode;
 }
 
 /**
  * Everything both Lesson 03 games share: the board they are pinned to, the cover with its Play button,
  * the teacher panel, full screen, sound, and confetti. Play fills the screen, so the TV shows only the game.
  */
-export function StoryPlay<TProgress, TAction>(props: StoryPlayProps<TProgress, TAction>) {
-  const { game, sounds, cover, children } = props;
+export function StoryPlay<TContent, TProgress, TAction, TOutcome, TSound extends string>(
+  props: StoryPlayProps<TContent, TProgress, TAction, TOutcome, TSound>,
+) {
+  const { activity, cover, children, look = `${storyFonts} bg-board font-story-body text-ink` } = props;
+  const game = activity.gameFor(props.lessonId);
   const fullscreen = useFullscreen();
   const ready = useHydrated(game);
   const sound = useSaved(game, (state) => state.sound);
   const status = useSaveStatus(game);
-  const play = useSfx(sounds, sound);
+  const play = useSfx(activity.sounds, sound);
   const { canvas, fire } = useConfetti();
   const [started, setStarted] = useState(false);
   const label = fullscreen.active ? "Leave full screen" : "Full screen";
@@ -60,7 +76,7 @@ export function StoryPlay<TProgress, TAction>(props: StoryPlayProps<TProgress, T
       }
     >
       <div
-        className={`${storyFonts} relative min-h-0 flex-1 overflow-hidden bg-board font-story-body text-ink [container-type:size] ${
+        className={`${look} relative min-h-0 flex-1 overflow-hidden [container-type:size] ${
           fullscreen.active ? "size-full" : "rounded-2xl"
         }`}
       >
@@ -70,6 +86,8 @@ export function StoryPlay<TProgress, TAction>(props: StoryPlayProps<TProgress, T
           {ready &&
             (started ? (
               children({ play, fire })
+            ) : typeof cover === "function" ? (
+              cover(start)
             ) : (
               <StartScreen title={cover.title} tagline={cover.tagline} play={cover.play} art={cover.art} onPlay={start}>
                 {cover.cast}
@@ -85,9 +103,11 @@ export function StoryPlay<TProgress, TAction>(props: StoryPlayProps<TProgress, T
             jumps={props.jumps}
             replayLabel={props.replayLabel}
             onReplay={props.onReplay}
-            onReset={props.onReset}
+            onReset={() => activity.reset()}
             status={status}
-          />
+          >
+            {props.teacher}
+          </TeacherPanel>
           <button
             type="button"
             aria-label={label}

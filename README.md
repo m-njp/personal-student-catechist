@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. It goes straight to the newest lesson. On a phone on the same Wi-Fi, use the "Network" address shown in the terminal.
+Open http://localhost:3000. It goes straight to the newest lesson; the menu lists every lesson. On a phone on the same Wi-Fi, use the "Network" address shown in the terminal.
 
 ## Teach Lesson 1: Build Our Wall
 
@@ -30,7 +30,8 @@ Visits are counted with Vercel Web Analytics, without cookies or names. Turn it 
 - [docs/adding-a-lesson.md](docs/adding-a-lesson.md): add a lesson or a new kind of activity
 - [docs/reflections-storage.md](docs/reflections-storage.md): where reflections are saved
 - [docs/design.md](docs/design.md): design tokens, fonts, and rules
+- [docs/game-saves.md](docs/game-saves.md): how a game's progress is saved
 - [docs/workflow.md](docs/workflow.md): branches, commits, checks, and releases
-- [docs/reports/admin-access.md](docs/reports/admin-access.md): proposal for a teacher-only page
+- [tools/bayan-art/README.md](tools/bayan-art/README.md): the scripts that draw Lesson 2's town
 
-Fonts: Geist, Geist Mono, and Geist Pixel (SIL Open Font License) and Sentient (ITF Free Font License). Licenses are in `src/styles/fonts/`.
+Fonts: Geist, Geist Mono, and Geist Pixel (SIL Open Font License) and Sentient (ITF Free Font License), with licenses in `src/styles/fonts/`. Lesson 3 loads Baloo 2 and Atkinson Hyperlegible from Google Fonts. Lesson 3's art and sound credits are in `public/lessons/lesson-03/CREDITS.md`.

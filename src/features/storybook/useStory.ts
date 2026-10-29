@@ -1,5 +1,6 @@
 "use client";
 
+import type confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { WORKER_GIFTS } from "./cast";
 import { readNumberToken, readToken } from "@/lib/tokens";
@@ -26,15 +27,13 @@ export function useTimings(): Timings {
   return timings;
 }
 
-type Shoot = (options: { particleCount: number; spread: number; origin: { y: number }; colors: string[] }) => unknown;
-
 /**
  * Confetti on a canvas inside the game, loaded only in the browser. Put `canvas` on a canvas that
  * covers the game; the confetti is cleared when the game closes.
  */
 export function useConfetti() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const shoot = useRef<(Shoot & { reset: () => void }) | null>(null);
+  const shoot = useRef<confetti.CreateTypes | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -49,9 +48,9 @@ export function useConfetti() {
     };
   }, []);
 
-  const fire = useCallback(() => {
-    const colors = WORKER_GIFTS.map((gift) => readToken(`--gift-${gift}`));
-    shoot.current?.({ particleCount: 160, spread: 90, origin: { y: 0.65 }, colors });
+  /** Lesson 03's gift colors unless a game names its own. */
+  const fire = useCallback((colors?: readonly string[]) => {
+    shoot.current?.({ particleCount: 160, spread: 90, origin: { y: 0.65 }, colors: [...(colors ?? WORKER_GIFTS.map((gift) => readToken(`--gift-${gift}`)))] });
   }, []);
 
   return { canvas, fire };

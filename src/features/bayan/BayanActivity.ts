@@ -4,7 +4,19 @@ import type { BayanContent } from "./content";
 import { createBayanSession, type BayanSession } from "./session";
 
 export type SoundName =
-  "music" | "talk" | "blip" | "pop" | "right" | "wrong" | "sparkle" | "hammer" | "rise" | "build" | "cheer" | "stage" | "door";
+  | "music"
+  | "talk"
+  | "blip"
+  | "pop"
+  | "right"
+  | "wrong"
+  | "sparkle"
+  | "hammer"
+  | "rise"
+  | "build"
+  | "cheer"
+  | "stage"
+  | "door";
 
 /** Files under public/. Map positions live in the Tiled maps, never in code. */
 export interface BayanAssets {

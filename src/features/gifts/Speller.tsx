@@ -1,9 +1,8 @@
 "use client";
 
-import { readNumberToken as timing } from "@/lib/tokens";
-
 import { Delete } from "lucide-react";
 import { motion } from "motion/react";
+import { readNumberToken as timing } from "@/lib/tokens";
 import { usedTiles } from "./rules";
 
 interface SpellerProps {

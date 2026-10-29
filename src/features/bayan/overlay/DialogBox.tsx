@@ -249,9 +249,7 @@ function StoryCard({ session, card, art, last }: { session: BayanSession; card: 
         {art && <div aria-hidden className="statue-art shrink-0" style={{ backgroundImage: `url(${art})` }} />}
         <div className="flex min-w-0 flex-1 flex-col gap-game-gap">
           <h2 className="pixel text-game-title lowercase">{card.title}</h2>
-          <p className={`text-game ${todo ? "italic text-muted" : "font-medium"}`}>
-            {todo ? "To be added by the teacher." : card.body}
-          </p>
+          <p className={`text-game ${todo ? "italic text-muted" : "font-medium"}`}>{todo ? "To be added by the teacher." : card.body}</p>
           <div className="flex justify-end">
             <button type="button" autoFocus onClick={() => director.next()} className={actionButton}>
               {last ? "Continue" : "Next"}
@@ -265,14 +263,7 @@ function StoryCard({ session, card, art, last }: { session: BayanSession; card: 
 }
 
 /** Stage 3: one of the Church's leaders, with who they are and what they do. */
-function FigureCard({
-  session,
-  content,
-  peopleSheet,
-  peopleRows,
-  index,
-  last,
-}: DialogBoxProps & { index: number; last: boolean }) {
+function FigureCard({ session, content, peopleSheet, peopleRows, index, last }: DialogBoxProps & { index: number; last: boolean }) {
   const { director } = session;
   const box = useRef<HTMLElement>(null);
   useCardKeys(session, box);

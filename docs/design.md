@@ -22,12 +22,14 @@ Every color, size, shadow, and timing lives in `src/app/globals.css`. Never writ
 | Reflection text | Sentient (`font-serif`) |
 | Lesson 03's games | Baloo 2 (`font-story`) and Atkinson Hyperlegible (`font-story-body`), loaded from Google Fonts and set only on the games' frame |
 
-Font files and licenses are in `src/styles/fonts/`.
+The self-hosted font files and licenses are in `src/styles/fonts/`.
+
+Each lesson's game has its own fonts, buttons, and motion, chosen for its story, so no two games look alike.
 
 ## Rules
 
 - No gradients. No divider lines: use space and card borders. The lesson list's tree lines are the one exception.
-- No middots, em dashes, or emoji. Headings are lowercase.
+- No middots, em dashes, or emoji. Headings on the site's own pages are lowercase; a game from Lesson 04 on uses the capitalization its content is written in.
 - Tap targets are at least 44px.
 - Cards are `rounded-2xl border border-hairline` with generous padding.
 - Mobile first: every screen works at 375px, then grows for laptop (`lg`) and TV.
@@ -71,18 +73,31 @@ A pixel town on Phaser and grid-engine, with every word drawn by React over the 
 Two games that look like colored paper pinned to a classroom board. Bayanihan Crew opens the lesson, and Gift Quest closes it.
 
 - Each game opens on a cover with its name, its cast, and one Play button. Play fills the screen, so the TV shows only the game, and the tap lets the browser play sound.
-
 - People are round paper tokens: an Open Peeps face from DiceBear, a ring in their gift's color, and the gift's badge. The bust is used as drawn; a body under it looked stitched on. The same gift color and icon mark the person's card, badge, and job tag, so a pupil matches picture to picture.
-- Faces show what a person is doing: smile at rest, calm when picked, driven at work, concerned for a moment after a wrong match, smileBig when done, lovingGrin1 when the scene is finished, explaining when Marco talks. Each face is drawn once per hair and expression and kept.
+- Faces show what a person is doing, so the class reads the moment without words. The few expressions allowed are listed in `cast.ts`, and each face is drawn once per hair and expression and kept.
 - Each game's rules are a pure step function (`rules.ts`) that returns the new progress and what happened. `StoryActivity` makes the saved game from them, and `StoryPlay` is the shell both games share. Only progress is saved; what is clean or placed is worked out from it. Each start of a scene or gift counts up an `attempt`, so a replay starts fresh too.
+- `StoryBoard` is the frame both boards share: who is talking and the progress on top, the game below. Every word, the teacher panel's too, comes from the lesson's content file.
 - One scene engine draws every Bayanihan Crew place from data: the content names the jobs and the words, and the scene's art module holds the backdrop, the parts that move, each job's mess and clean layers, where its tag is pinned, and where the worker stands to work.
-- The places are alive: clouds drift, the flag waves, trees sway, birds fly past, lamps swing, and candles flicker. The crew bobs while waiting, and each worker says a short line and moves their tool while working.
-- Progress always shows: a star for each place finished and a pip for each job given in Bayanihan Crew, and a badge that lights for each gift found in Gift Quest.
+- The places are alive, so a still screen never looks frozen: small things in each scene move on a loop, the crew bobs while waiting, and each worker says a short line and moves their tool while working.
+- Progress always shows, so the class knows how far they have come.
 - Every right answer is rewarded at once: a sparkle burst, a sound, and a line from Marco. Letters pop into their boxes, the word bounces green, and the piece flies into the picture.
 - Paper shadows are an SVG filter, so only still layers use it. Each mess, clean, and moving layer is its own small picture whose wrapper fades or moves, and tokens move by transform only, so nothing that moves is redrawn.
 - Drag uses the pointer's position, so a tag under the finger is the one that counts. Tapping a friend and then a job does the same, and is the keyboard path. On a phone, job targets show their gift icons at least 44px wide, with the full job name available to screen readers. In Gifts for Our Barangay, typing letters and Backspace work too.
 - Feedback is spoken in one line that screen readers hear. Wrong answers cost nothing: Marco gives the job's picture as a hint, the letter boxes shake and clear, and a bad use of a gift asks the class to choose again.
 - Under reduced motion the hops and fades are skipped and tokens jump straight to their place.
+
+## Greet the World (Lesson 04)
+
+A camera quiz. Two groups play at once, one player each: Player 1 on the left in blue, Player 2 on the right in orange. Square paper panels and black ink; blue and orange belong to the players only. Bebas Neue for headings, IBM Plex Sans for reading, Space Mono for labels, self-hosted in `src/styles/fonts/greet`.
+
+- The class sits behind the players, so the detector reads only people standing close: shoulders smaller than the player size are never read, a locked player can only be followed by someone about as close, and a hand counts only when it is big enough for the player beside it. The teacher can tune the player size in the panel.
+- The camera stays quiet: a joint-dotted skeleton in each player's color, nobody else drawn, and a numbered tag over each head showing the sign the camera sees and a bar that fills while it is held.
+- A match plays every question in `greet.ts` in order and runs by itself: each card shows with a 3, 2, 1, its timer starts, and the result shows before the next card. Teacher keys and buttons answer through the same path as the camera. A faster right answer scores more.
+- Each question names its answer signs, so a true or false can be thumbs, or a smile and a surprised face. Every sign the questions use is tried one at a time in Setup, with the seconds held and a chime when it passes.
+- The final round uses the two tracked players. Each holds two open palms to light their own half of the globe. Both players must be present and confirmed.
+- Music plays under a match; short sounds mark the countdown, the start, each result, and the finish. The clips and music come from `tools/greet-art`. The camera runtime and models are not committed: `npm run dev` and `npm run build` fetch them there, checked against pinned hashes.
+- Inference runs in a worker with one frame in flight. Stale results never count. Hand ownership is one-to-one with visible player wrists, and all meters use the same time-based confirmation as scoring.
+- No picture or landmark leaves the laptop. Only scores and settings are saved, on this laptop.
 
 ## Performance
 

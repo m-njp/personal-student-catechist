@@ -29,4 +29,4 @@ Without settings, `npm run dev` keeps reflections in the dev server's memory. Wi
 
 ## Privacy
 
-The API has no login: anyone with the link can read a lesson's reflections and remove one, and pupil names are stored. See `docs/reports/admin-access.md` for ways to lock this down.
+The API has no login: anyone with the link can read a lesson's reflections and remove one, and pupil names are stored. A teacher-only login would close this; none is built yet.
