@@ -10,7 +10,15 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-explicit-any": "error",
     },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "tools/**"]),
+  // MediaPipe's wasm loader is copied into public/ as built, so it is not our code to lint.
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "tools/**",
+    "public/lessons/lesson-04/greet-the-world/mediapipe/**",
+  ]),
 ]);
 
 export default eslintConfig;

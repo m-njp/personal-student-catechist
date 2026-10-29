@@ -15,28 +15,44 @@ import { useSfx, type SfxName } from "./useSfx";
 import { useConfetti } from "./useStory";
 
 /** What a game's board gets from the shell. */
-export interface Stage {
-  play: (name: SfxName) => void;
-  fire: () => void;
+export interface Stage<TSound extends string = SfxName> {
+  play: (name: TSound) => void;
+  fire: (colors?: readonly string[]) => void;
 }
 
-interface StoryPlayProps<TContent, TProgress, TAction> {
-  activity: StoryActivity<TContent, TProgress, TAction>;
+/** The standard cover with one Play button. */
+interface Cover {
+  title: string;
+  tagline: string;
+  play: string;
+  art: ReactNode;
+  cast: ReactNode;
+}
+
+interface StoryPlayProps<TContent, TProgress, TAction, TOutcome, TSound extends string> {
+  activity: StoryActivity<TContent, TProgress, TAction, TOutcome, TSound>;
   lessonId: string;
-  cover: { title: string; tagline: string; play: string; art: ReactNode; cast: ReactNode };
+  /** The standard cover, or a game's own that calls `start` from its buttons. */
+  cover: Cover | ((start: () => void) => ReactNode);
   jumpTitle: string;
   jumps: readonly Jump[];
   replayLabel: string;
   onReplay: () => void;
-  children: (stage: Stage) => ReactNode;
+  /** Extra teacher controls, shown in the teacher panel. */
+  teacher?: ReactNode;
+  /** The game's own fonts, background, and text color. Lesson 03's paper board when left out. */
+  look?: string;
+  children: (stage: Stage<TSound | "select">) => ReactNode;
 }
 
 /**
  * Everything both Lesson 03 games share: the board they are pinned to, the cover with its Play button,
  * the teacher panel, full screen, sound, and confetti. Play fills the screen, so the TV shows only the game.
  */
-export function StoryPlay<TContent, TProgress, TAction>(props: StoryPlayProps<TContent, TProgress, TAction>) {
-  const { activity, cover, children } = props;
+export function StoryPlay<TContent, TProgress, TAction, TOutcome, TSound extends string>(
+  props: StoryPlayProps<TContent, TProgress, TAction, TOutcome, TSound>,
+) {
+  const { activity, cover, children, look = `${storyFonts} bg-board font-story-body text-ink` } = props;
   const game = activity.gameFor(props.lessonId);
   const fullscreen = useFullscreen();
   const ready = useHydrated(game);
@@ -60,7 +76,7 @@ export function StoryPlay<TContent, TProgress, TAction>(props: StoryPlayProps<TC
       }
     >
       <div
-        className={`${storyFonts} relative min-h-0 flex-1 overflow-hidden bg-board font-story-body text-ink [container-type:size] ${
+        className={`${look} relative min-h-0 flex-1 overflow-hidden [container-type:size] ${
           fullscreen.active ? "size-full" : "rounded-2xl"
         }`}
       >
@@ -70,6 +86,8 @@ export function StoryPlay<TContent, TProgress, TAction>(props: StoryPlayProps<TC
           {ready &&
             (started ? (
               children({ play, fire })
+            ) : typeof cover === "function" ? (
+              cover(start)
             ) : (
               <StartScreen title={cover.title} tagline={cover.tagline} play={cover.play} art={cover.art} onPlay={start}>
                 {cover.cast}
@@ -87,7 +105,9 @@ export function StoryPlay<TContent, TProgress, TAction>(props: StoryPlayProps<TC
             onReplay={props.onReplay}
             onReset={() => activity.reset()}
             status={status}
-          />
+          >
+            {props.teacher}
+          </TeacherPanel>
           <button
             type="button"
             aria-label={label}
