@@ -29,7 +29,7 @@ This machine runs Windows PowerShell 5.1 and has no `gh`. Run one command per li
 4. Give the user this link to open the pull request in the browser (replace the branch name):
 
    ```
-   https://github.com/drSabine/personal-student-catechist/compare/staging...feat/lesson-02?expand=1
+   https://github.com/m-njp/personal-student-catechist/compare/staging...feat/lesson-02?expand=1
    ```
 
    Fill in the template: what changed, why, and the checklist. If the change needs something set up outside the code, such as a Vercel integration or environment variable, say so, for Production and Preview.
