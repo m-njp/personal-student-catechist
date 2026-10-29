@@ -38,3 +38,7 @@ Use the paper colors in `src/features/storybook/art/paper.ts` and the shared pie
 - Words live in the lesson's content file (`lesson-02/bayan.ts`): every line, question, hint, and person's name. Scenes hold no lesson text.
 - Positions live in the map, which `tools/bayan-art/gen_maps.py` writes. Each person is an object whose name is their id; the content file says who that id is and how they look, and the object's `behavior` says how they move.
 - Progress is saved for the class (see `docs/game-saves.md`), so the teacher resets the town from the game's teacher panel before a new class.
+
+## A question for Greet the World
+
+Add it to `questions` in Lesson 04's `greet.ts`, where it plays in that order. A true or false or an A, B, C question uses thumbs or fingers unless it names its own `signs`; a pose names one action. Use only signs the detector reads, and the Setup check tries every sign the questions use. Keep a question to one short line and a choice to a few words: the card is a narrow column beside the camera, and `content.test.ts` holds the limits.

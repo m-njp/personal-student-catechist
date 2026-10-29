@@ -24,10 +24,12 @@ Every color, size, shadow, and timing lives in `src/app/globals.css`. Never writ
 
 The self-hosted font files and licenses are in `src/styles/fonts/`.
 
+Each lesson's game has its own fonts, buttons, and motion, chosen for its story, so no two games look alike.
+
 ## Rules
 
 - No gradients. No divider lines: use space and card borders. The lesson list's tree lines are the one exception.
-- No middots, em dashes, or emoji. Headings are lowercase.
+- No middots, em dashes, or emoji. Headings on the site's own pages are lowercase; a game from Lesson 04 on uses the capitalization its content is written in.
 - Tap targets are at least 44px.
 - Cards are `rounded-2xl border border-hairline` with generous padding.
 - Mobile first: every screen works at 375px, then grows for laptop (`lg`) and TV.
@@ -83,6 +85,19 @@ Two games that look like colored paper pinned to a classroom board. Bayanihan Cr
 - Drag uses the pointer's position, so a tag under the finger is the one that counts. Tapping a friend and then a job does the same, and is the keyboard path. On a phone, job targets show their gift icons at least 44px wide, with the full job name available to screen readers. In Gifts for Our Barangay, typing letters and Backspace work too.
 - Feedback is spoken in one line that screen readers hear. Wrong answers cost nothing: Marco gives the job's picture as a hint, the letter boxes shake and clear, and a bad use of a gift asks the class to choose again.
 - Under reduced motion the hops and fades are skipped and tokens jump straight to their place.
+
+## Greet the World (Lesson 04)
+
+A camera quiz. Two groups play at once, one player each: Player 1 on the left in blue, Player 2 on the right in orange. Square paper panels and black ink; blue and orange belong to the players only. Bebas Neue for headings, IBM Plex Sans for reading, Space Mono for labels, self-hosted in `src/styles/fonts/greet`.
+
+- The class sits behind the players, so the detector reads only people standing close: shoulders smaller than the player size are never read, a locked player can only be followed by someone about as close, and a hand counts only when it is big enough for the player beside it. The teacher can tune the player size in the panel.
+- The camera stays quiet: a joint-dotted skeleton in each player's color, nobody else drawn, and a numbered tag over each head showing the sign the camera sees and a bar that fills while it is held.
+- A match plays every question in `greet.ts` in order and runs by itself: each card shows with a 3, 2, 1, its timer starts, and the result shows before the next card. Teacher keys and buttons answer through the same path as the camera. A faster right answer scores more.
+- Each question names its answer signs, so a true or false can be thumbs, or a smile and a surprised face. Every sign the questions use is tried one at a time in Setup, with the seconds held and a chime when it passes.
+- The final round uses the two tracked players. Each holds two open palms to light their own half of the globe. Both players must be present and confirmed.
+- Music plays under a match; short sounds mark the countdown, the start, each result, and the finish. The clips and music come from `tools/greet-art`. The camera runtime and models are not committed: `npm run dev` and `npm run build` fetch them there, checked against pinned hashes.
+- Inference runs in a worker with one frame in flight. Stale results never count. Hand ownership is one-to-one with visible player wrists, and all meters use the same time-based confirmation as scoring.
+- No picture or landmark leaves the laptop. Only scores and settings are saved, on this laptop.
 
 ## Performance
 
