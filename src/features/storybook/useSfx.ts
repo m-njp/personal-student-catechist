@@ -8,8 +8,11 @@ export type SfxName = "select" | "place" | "wrong" | "right" | "done" | "tap";
 export type SfxFiles = Readonly<Record<SfxName, string>>;
 
 /** Short clips, loaded once when the game opens and released when it closes. Silent when `on` is false. */
-export function useSfx(files: SfxFiles, on: boolean): (name: SfxName) => void {
-  const clips = useRef<Map<SfxName, HTMLAudioElement> | null>(null);
+export function useSfx<TName extends string = SfxName>(
+  files: Readonly<Record<TName, string>>,
+  on: boolean,
+): (name: TName) => void {
+  const clips = useRef<Map<TName, HTMLAudioElement> | null>(null);
   const enabled = useRef(on);
 
   useEffect(() => {
@@ -17,8 +20,8 @@ export function useSfx(files: SfxFiles, on: boolean): (name: SfxName) => void {
   }, [on]);
 
   useEffect(() => {
-    const loaded = new Map<SfxName, HTMLAudioElement>();
-    for (const [name, src] of Object.entries(files) as [SfxName, string][]) {
+    const loaded = new Map<TName, HTMLAudioElement>();
+    for (const [name, src] of Object.entries(files) as [TName, string][]) {
       const audio = new Audio(src);
       audio.preload = "auto";
       loaded.set(name, audio);
@@ -34,7 +37,7 @@ export function useSfx(files: SfxFiles, on: boolean): (name: SfxName) => void {
     };
   }, [files]);
 
-  return useCallback((name: SfxName) => {
+  return useCallback((name: TName) => {
     const audio = clips.current?.get(name);
     if (!audio || !enabled.current) return;
     audio.currentTime = 0;

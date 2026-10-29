@@ -1,9 +1,9 @@
 "use client";
 
 import { RotateCcw, Settings, Volume2, VolumeX, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { SaveStatus } from "@/core/save/SyncedStorage";
-import { cornerButton } from "./styles";
+import { cornerButton, panelLabel, panelRow as row } from "./styles";
 
 export interface Jump {
   label: string;
@@ -20,12 +20,22 @@ interface TeacherPanelProps {
   onReplay: () => void;
   onReset: () => void;
   status: SaveStatus;
+  /** A game's own controls, shown before replay and reset. */
+  children?: ReactNode;
 }
 
-const row = "flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-left text-sm hover:bg-wash";
-
 /** A small corner panel for the teacher: sound, jumps, replay, and reset. Reset asks twice. */
-export function TeacherPanel({ sound, onSound, jumpTitle, jumps, replayLabel, onReplay, onReset, status }: TeacherPanelProps) {
+export function TeacherPanel({
+  sound,
+  onSound,
+  jumpTitle,
+  jumps,
+  replayLabel,
+  onReplay,
+  onReset,
+  status,
+  children,
+}: TeacherPanelProps) {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
@@ -63,8 +73,8 @@ export function TeacherPanel({ sound, onSound, jumpTitle, jumps, replayLabel, on
         {open ? <X aria-hidden className="size-5" /> : <Settings aria-hidden className="size-5" />}
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-30 mt-2 flex w-64 flex-col gap-1 rounded-2xl border-2 border-ink bg-paper p-2 font-sans shadow-story">
-          <p className="px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted">Teacher</p>
+        <div className="absolute right-0 top-full z-30 mt-2 flex max-h-teacher-panel w-64 flex-col overflow-y-auto gap-1 rounded-2xl border-2 border-ink bg-paper p-2 font-sans shadow-story">
+          <p className={panelLabel}>Teacher</p>
           <button
             type="button"
             role="switch"
@@ -82,7 +92,7 @@ export function TeacherPanel({ sound, onSound, jumpTitle, jumps, replayLabel, on
               {sound ? "On" : "Off"}
             </span>
           </button>
-          <p className="px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted">{jumpTitle}</p>
+          <p className={panelLabel}>{jumpTitle}</p>
           {jumps.map((jump) => (
             <button
               key={jump.label}
@@ -94,6 +104,7 @@ export function TeacherPanel({ sound, onSound, jumpTitle, jumps, replayLabel, on
               {jump.label}
             </button>
           ))}
+          {children}
           <button type="button" onClick={run(onReplay)} className={`${row} mt-1`}>
             <RotateCcw aria-hidden className="size-4" />
             {replayLabel}

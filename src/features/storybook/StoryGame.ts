@@ -5,17 +5,17 @@ import type { SavedStore } from "./savedStore";
 export type Outcome = "done" | "right" | "wrong" | "ignored";
 
 /**
- * One Lesson 03 game: its saved store and its rules. The rules are a pure step function, so the
- * game only keeps the store in step with them.
+ * One saved game: its store and its rules. The rules are a pure step function, so the
+ * game only keeps the store in step with them. A game with richer moments names its own outcomes.
  */
-export class StoryGame<TProgress, TAction> {
+export class StoryGame<TProgress, TAction, TOutcome = Outcome> {
   constructor(
     readonly store: SavedStore<TProgress>,
     readonly sync: SyncedStorage,
-    private readonly rules: (progress: TProgress, action: TAction) => [TProgress, Outcome],
+    private readonly rules: (progress: TProgress, action: TAction) => [TProgress, TOutcome],
   ) {}
 
-  dispatch(action: TAction): Outcome {
+  dispatch(action: TAction): TOutcome {
     const current = this.store.getState().progress;
     const [progress, outcome] = this.rules(current, action);
     if (progress !== current) this.store.setState({ progress });

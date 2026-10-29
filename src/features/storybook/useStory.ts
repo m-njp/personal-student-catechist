@@ -48,9 +48,9 @@ export function useConfetti() {
     };
   }, []);
 
-  const fire = useCallback(() => {
-    const colors = WORKER_GIFTS.map((gift) => readToken(`--gift-${gift}`));
-    shoot.current?.({ particleCount: 160, spread: 90, origin: { y: 0.65 }, colors });
+  /** Lesson 03's gift colors unless a game names its own. */
+  const fire = useCallback((colors?: readonly string[]) => {
+    shoot.current?.({ particleCount: 160, spread: 90, origin: { y: 0.65 }, colors: [...(colors ?? WORKER_GIFTS.map((gift) => readToken(`--gift-${gift}`)))] });
   }, []);
 
   return { canvas, fire };

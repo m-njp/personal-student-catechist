@@ -90,6 +90,8 @@
   --container-story-card: 44rem;
   /* Room for the teacher panel and full screen buttons in the top corner. */
   --spacing-corner: 7.5rem;
+  /* The teacher panel scrolls rather than run off the bottom of the game. */
+  --spacing-teacher-panel: calc(100cqh - 4.5rem);
   /* Lesson 03's sizes inside a scene, from the scene's width. */
   --spacing-scene-token: max(2.75rem, 8cqw);
   --spacing-tag: 15cqw;
@@ -108,19 +110,26 @@
   /* The cork-colored board the scenes are pinned to. */
   --color-board: #e9dcc3;
 
+  /* Greet the World uses its own fonts and player colors. */
+  --color-greet-night: #242620;
+  --color-greet-stage: #191e20;
+  --color-greet-cream: #f5f0e5;
+  --color-greet-sheet: #fffcf4;
+  --color-greet-muted: #66685e;
+  --color-greet-blue: #3376d2;
+  --color-greet-orange: #bc592b;
+  --color-greet-pink: #dce965;
+  --shadow-greet-card: 3px 3px 0 var(--color-greet-night);
+
   --tracking-label: 0.14em;
 
-  /* Layout sizes */
+  /* Shared page layout. */
   --spacing-sidebar: 16rem;
   --spacing-aside: 20rem;
-  /* Widest a content page grows, so it stays together on a TV. */
   --container-page: 96rem;
   --spacing-panel: clamp(17rem, 24vw, 24rem);
-  /* The free space beside a square wall, so the floating panel never covers it. */
   --spacing-float-panel: clamp(13.5rem, calc((100vw - 100vh) / 2 - 1.5rem), 18rem);
-  /* Fixed, so the wall never jumps. svh ignores the phone's URL bar. */
   --spacing-tray: clamp(6rem, 14svh, 9rem);
-  /* Padding that scales with its own text, for the question band. */
   --spacing-caption: 0.25em;
 
   /* Depth, made from ink so it follows the palette */
@@ -219,6 +228,9 @@
 @theme inline {
   --font-story: var(--nf-baloo), system-ui, sans-serif;
   --font-story-body: var(--nf-atkinson), system-ui, sans-serif;
+  --font-greet: var(--nf-greet-display), Impact, sans-serif;
+  --font-greet-body: var(--nf-greet-body), system-ui, sans-serif;
+  --font-greet-sign: var(--nf-greet-mono), ui-monospace, monospace;
 }
 
 /* Tokens used from component styles rather than as classes. */
@@ -444,3 +456,230 @@ body {
     outline-offset: 2px;
   }
 }
+
+:root {
+  --greet-min-width: 64rem;
+  /* Each player's thin body outline over the camera, in CSS pixels. */
+  --greet-outline: 1.8;
+  --greet-joint: 2.8;
+  --greet-tip: 4;
+  --greet-track-ease-ms: 35;
+  /* The background loop sits under the voices in the room. */
+  --greet-music-volume: 0.3;
+  --greet-canvas-ratio: 1.5;
+  --greet-tick-ms: 100;
+}
+
+/* Greet the World keeps its paper theme inside the game frame. */
+.greet-shell {
+  --font-greet: var(--nf-greet-display), Impact, sans-serif;
+  --font-greet-body: var(--nf-greet-body), system-ui, sans-serif;
+  --font-greet-sign: var(--nf-greet-mono), ui-monospace, monospace;
+  --greet-pad: max(0.75rem, 1.8cqmin);
+  --greet-gap: max(0.6rem, 1.5cqmin);
+  --greet-side: clamp(16rem, 25cqw, 21rem);
+  --greet-stroke: 1.5px;
+  --greet-heading: max(2rem, 5cqmin);
+  --greet-body: max(1rem, 2.3cqmin);
+  --greet-label: max(0.8rem, 1.7cqmin);
+  --greet-focus: 3px;
+  --greet-move: 2px;
+  position: relative; display: flex; flex: 1; min-height: 0; flex-direction: column;
+  overflow: hidden; isolation: isolate; container-type: size;
+  background: var(--color-greet-cream); color: var(--color-greet-night);
+  font: var(--greet-body)/1.35 var(--font-greet-body);
+  border: var(--greet-stroke) solid var(--color-greet-night);
+}
+.greet-shell :is(button, select, input, summary):focus-visible { outline: var(--greet-focus) solid var(--color-greet-blue); outline-offset: var(--greet-focus); }
+.greet-shell button { cursor: pointer; }
+.greet-shell button:disabled { cursor: default; opacity: 0.4; }
+.greet-shell svg { flex-shrink: 0; }
+.greet-corner-tools { position: absolute; right: var(--greet-pad); top: var(--greet-pad); z-index: 30; display: flex; gap: 0.4rem; }
+.greet-icon-button { display: inline-flex; width: 2.75rem; height: 2.75rem; justify-content: center; align-items: center; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); }
+.greet-icon-button svg { width: 1.2rem; height: 1.2rem; }
+.greet-icon-button:hover, .greet-tool:hover { background: var(--color-greet-pink); }
+.greet-eyebrow { font-family: var(--font-greet-sign); font-size: var(--greet-label); text-transform: uppercase; letter-spacing: 0.04em; }
+.greet-heading { font: 400 var(--greet-heading)/1 var(--font-greet); }
+.greet-lede { font-size: max(1.25rem, 3cqmin); max-width: 34em; }
+.greet-hint { color: var(--color-greet-muted); font-size: 0.9rem; }
+.greet-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.65rem; min-height: 2.75rem; padding: 0.65rem 1rem; font: 0.95rem/1.3 var(--font-greet-sign); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); text-align: center; }
+.greet-button svg { width: 1.2em; height: 1.2em; }
+.greet-button-primary { background: var(--color-greet-night); color: var(--color-greet-sheet); }
+.greet-button-plain { background: var(--color-greet-sheet); }
+.greet-button:hover { background: var(--color-greet-pink); color: var(--color-greet-night); }
+.greet-button:active { transform: translate(var(--greet-move), var(--greet-move)); box-shadow: none; }
+.greet-sheet { border: var(--greet-stroke) solid var(--color-greet-night); background: var(--color-greet-sheet); box-shadow: var(--shadow-greet-card); }
+.greet-tool { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 2.75rem; padding: 0.4rem 0.7rem; border: var(--greet-stroke) solid var(--color-greet-night); background: var(--color-greet-sheet); font: 0.85rem/1.3 var(--font-greet-sign); }
+.greet-text-button { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; font: 0.85rem/1.3 var(--font-greet-sign); text-decoration: underline; text-underline-offset: 0.2em; }
+.greet-text-button svg, .greet-tool svg { width: 1em; height: 1em; }
+.greet-tool-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.greet-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: var(--greet-gap); padding: var(--greet-pad); padding-right: calc(var(--greet-pad) + 6.5rem); }
+.greet-wordmark { min-height: 2.75rem; font: 400 max(1.4rem, 3.3cqmin)/1 var(--font-greet); white-space: nowrap; }
+.greet-stepnav { display: flex; align-items: center; gap: 0.25rem; }
+.greet-stepnav button { display: flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.4rem 0.65rem; font: var(--greet-label)/1.3 var(--font-greet-sign); }
+.greet-stepnav button[aria-current] { background: var(--color-greet-night); color: var(--color-greet-sheet); }
+.greet-step-number { font: 0.8rem/1.3 var(--font-greet-sign); }
+.greet-stepnav button:hover { background: var(--color-greet-pink); color: var(--color-greet-night); }
+.greet-page { padding: 0 var(--greet-pad) var(--greet-pad); min-height: 0; min-width: 0; flex: 1; }
+.greet-section-heading { display: flex; flex-direction: column; gap: 0.35rem; }
+.greet-workspace { display: grid; grid-template-columns: minmax(0, 1fr) var(--greet-side); gap: var(--greet-gap); min-height: 0; }
+.greet-camera-workspace { display: flex; flex-direction: column; gap: 0.35rem; min-height: 0; min-width: 0; flex: 1; }
+.greet-sidebar { display: flex; flex-direction: column; align-items: stretch; gap: var(--greet-gap); min-height: 0; overflow-y: auto; scrollbar-width: thin; padding-right: 0.4rem; }
+.greet-sidebar > * { flex-shrink: 0; }
+.greet-cover { flex: 1; display: flex; align-items: center; padding: max(2rem, 5cqmin); min-height: 0; }
+.greet-cover-copy { display: flex; flex-direction: column; align-items: flex-start; gap: max(1rem, 3cqmin); max-width: 65rem; }
+.greet-cover-title { font: 400 max(5rem, 16cqmin)/0.95 var(--font-greet); max-width: 8em; }
+.greet-cover-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+.greet-cover-links button span { opacity: 0.7; }
+.greet-guide { display: flex; flex-direction: column; gap: var(--greet-gap); overflow-y: auto; }
+.greet-guide-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--greet-gap); flex: 1; min-height: 0; }
+.greet-guide-steps li { display: flex; flex-direction: column; justify-content: center; gap: 1rem; padding: var(--greet-pad); min-height: 0; }
+.greet-guide-steps h3 { font-weight: 600; font-size: max(1.4rem, 3.5cqmin); }
+.greet-guide-steps p { font-size: max(1.15rem, 2.8cqmin); }
+.greet-guide-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--greet-gap); }
+.greet-answer-signs { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.greet-answer-signs li { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.65rem; background: var(--color-greet-sheet); font: 0.85rem/1.3 var(--font-greet-sign); }
+.greet-answer-signs svg { width: 1.6rem; height: 1.6rem; }
+.greet-setup-block { display: flex; flex-direction: column; gap: 0.5rem; background: var(--color-greet-sheet); padding: 0.85rem; font-size: 1rem; }
+.greet-setup-block select { min-height: 2.75rem; padding: 0.4rem; background: var(--color-greet-cream); width: 100%; }
+.greet-setup-light { flex-direction: row; align-items: center; }
+.greet-setup-warning { background: var(--color-greet-orange); color: var(--color-greet-sheet); }
+.greet-check-box { display: inline-flex; width: 1.2rem; height: 1.2rem; align-items: center; justify-content: center; font: 0.8rem/1 var(--font-greet-sign); }
+.greet-check-box svg { width: 1rem; height: 1rem; }
+.greet-camera-status { position: absolute; left: 0.6rem; bottom: 0.6rem; padding: 0.4rem 0.6rem; background: var(--color-greet-stage); font: 0.85rem/1.3 var(--font-greet-sign); }
+.greet-camera-message { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 1.5rem; font-size: max(1rem, 2.7cqmin); }
+.greet-camera-message > svg { width: 2.5rem; height: 2.5rem; opacity: 0.5; }
+.greet-detector { font: 0.9rem/1.4 var(--font-greet-sign); }
+.greet-detector summary { display: flex; align-items: center; min-height: 2.75rem; cursor: pointer; text-decoration: underline; text-underline-offset: 0.2em; }
+.greet-detector-panel { position: absolute; inset: var(--greet-pad); z-index: 40; padding: var(--greet-pad); display: flex; flex-direction: column; gap: 0.75rem; overflow: auto; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); }
+.greet-detector-panel table { width: 100%; text-align: left; }
+.greet-detector-panel :is(th, td) { padding: 0.45rem; vertical-align: top; }
+.greet-detector-panel tbody tr:nth-child(odd) { background: var(--color-greet-cream); }
+.greet-detector-panel :is(pre, ol) { white-space: pre-wrap; overflow-wrap: anywhere; }
+.greet-play { display: flex; flex-direction: column; gap: var(--greet-gap); }
+.greet-play-workspace { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(22rem, 1fr); gap: var(--greet-gap); flex: 1; min-height: 0; }
+.greet-question { font: 600 max(1.75rem, 4.2cqmin)/1.15 var(--font-greet-body); }
+.greet-timer { margin-left: auto; min-width: 2.5em; padding: 0.35rem 0.6rem; text-align: center; font: max(1.75rem, 5cqmin)/1 var(--font-greet-sign); background: var(--color-greet-cream); border: var(--greet-stroke) solid var(--color-greet-night); }
+.greet-timer[data-state=low] { background: var(--color-greet-orange); color: var(--color-greet-sheet); }
+.greet-timer[data-state=ready] { background: var(--color-greet-night); color: var(--color-greet-sheet); }
+.greet-get-ready { font: 400 max(1.6rem, 4cqmin)/1 var(--font-greet); color: var(--color-greet-orange); }
+.greet-quiz-hint { font-size: max(1rem, 2.5cqmin); }
+.greet-manual-stage { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; min-height: 0; gap: 1rem; padding: var(--greet-pad); background: var(--color-greet-cream); text-align: center; }
+.greet-scoreboard { display: flex; flex-direction: column; gap: var(--greet-gap); align-items: flex-start; overflow-y: auto; }
+.greet-turn-score { font: 400 max(3rem, 9cqmin)/1 var(--font-greet); }
+.greet-closing-question { font: 400 max(3rem, 10cqmin)/1.05 var(--font-greet); max-width: 12em; margin-block: auto; }
+.greet-final-scores { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 45rem; }
+.greet-final-scores li { display: flex; justify-content: space-between; align-items: center; min-height: 2.75rem; padding: 0.7rem; background: var(--color-greet-sheet); }
+.greet-final-scores strong { font-family: var(--font-greet-sign); font-weight: 400; }
+.greet-loading { display: flex; flex: 1; min-height: 0; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: var(--greet-pad); text-align: center; }
+.greet-loading > svg { width: 3rem; height: 3rem; }
+.greet-loading ol { display: flex; flex-direction: column; gap: 0.6rem; text-align: left; }
+.greet-loading li { display: flex; align-items: center; gap: 0.7rem; color: var(--color-greet-muted); }
+.greet-loading li[data-active=true] { color: var(--color-greet-night); }
+.greet-panel-row { display: flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; width: 100%; padding: 0.5rem 0.75rem; text-align: left; font-size: 0.875rem; }
+.greet-panel-row:hover { background: var(--color-greet-pink); }
+/* Greet the World: the match. Each side carries its group's color in --greet-side. */
+.greet-side-blue, .greet-tag-blue { --greet-side: var(--color-greet-blue); }
+.greet-side-orange, .greet-tag-orange { --greet-side: var(--color-greet-orange); }
+.greet-camera { position: relative; flex: 1; min-width: 0; min-height: 0; overflow: hidden; background: var(--color-greet-stage); color: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); }
+.greet-camera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.greet-mirror { transform: scaleX(-1); }
+.greet-tag { position: absolute; left: 0; top: 0; visibility: hidden; display: flex; align-items: stretch; filter: drop-shadow(0.15rem 0.15rem 0 var(--color-greet-night)); white-space: nowrap; transition: scale 0.15s; }
+.greet-tag-badge, .greet-side-badge { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; aspect-ratio: 1; background: var(--greet-side); color: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); font: 400 1em/1 var(--font-greet); }
+.greet-tag-badge { align-self: flex-start; height: max(3.5rem, 8cqmin); width: max(3.5rem, 8cqmin); font-size: max(2.5rem, 6cqmin); border-radius: 50%; }
+.greet-side-badge { width: 1.6em; border-radius: 50%; }
+.greet-tag-body { display: flex; flex-direction: column; justify-content: center; gap: 0.15rem; margin-left: -0.5rem; padding: 0.3rem 0.7rem 0.4rem 1rem; background: var(--color-greet-sheet); color: var(--color-greet-night); border: var(--greet-stroke) solid var(--color-greet-night); border-left: none; }
+.greet-tag-check { display: none; width: 1em; height: 1em; }
+.greet-tag[data-state=done] .greet-tag-check { display: inline-block; margin-left: 0.3rem; }
+.greet-tag[data-state=done] .greet-tag-body { background: var(--greet-side); color: var(--color-greet-sheet); }
+.greet-tag strong { display: flex; align-items: center; font: 400 max(1.3rem, 3cqmin)/1 var(--font-greet); }
+.greet-tag-hold { display: block; height: 0.35rem; margin-top: 0.15rem; background: color-mix(in srgb, var(--color-greet-night) 15%, transparent); }
+.greet-tag-hold > span { display: block; height: 100%; transform: scaleX(0); transform-origin: left; background: var(--greet-side, var(--color-greet-blue)); }
+.greet-match-bar { display: flex; justify-content: space-between; gap: var(--greet-gap); }
+.greet-match-bar > span { display: flex; align-items: center; gap: 0.75rem; padding: 0.3rem 0.9rem 0.3rem 0.3rem; background: var(--greet-side); color: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); font: 400 max(1.5rem, 3.6cqmin)/1.1 var(--font-greet); }
+.greet-match-bar strong { font: 400 1em/1 var(--font-greet-sign); }
+.greet-card { display: flex; flex-direction: column; gap: var(--greet-gap); min-height: 0; overflow-y: auto; padding: var(--greet-pad); background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); }
+.greet-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.greet-kind { padding: 0.25rem 0.55rem; background: var(--color-greet-night); color: var(--color-greet-sheet); font: var(--greet-label)/1.2 var(--font-greet-sign); text-transform: uppercase; }
+.greet-options { display: flex; flex-direction: column; gap: 0.6rem; }
+.greet-option { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.85rem; background: var(--color-greet-cream); border: var(--greet-stroke) solid var(--color-greet-night); font: 600 max(1.25rem, 3cqmin)/1.2 var(--font-greet-body); }
+/* The card names its kind in its class: greet-options-trueFalse, -choice, or -pose. */
+.greet-options-trueFalse, .greet-options-pose { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.greet-options-trueFalse .greet-option, .greet-options-pose .greet-option { flex-direction: column; justify-content: center; text-align: center; padding-block: 1rem; }
+.greet-options-trueFalse .greet-option-text, .greet-options-pose .greet-option-text { font: 400 max(2rem, 5cqmin)/1 var(--font-greet); }
+.greet-option[data-right=true] { background: var(--color-greet-pink); box-shadow: var(--shadow-greet-card); }
+.greet-option-mark { display: inline-flex; width: 1.6em; height: 1.6em; flex-shrink: 0; align-items: center; justify-content: center; background: var(--color-greet-night); color: var(--color-greet-sheet); font: 400 1em/1 var(--font-greet-sign); }
+.greet-option-sign { width: 2.2rem; height: 2.2rem; }
+.greet-options-trueFalse .greet-option-sign, .greet-options-pose .greet-option-sign { width: max(3rem, 8cqmin); height: max(3rem, 8cqmin); }
+.greet-option-text { flex: 1; }
+.greet-option-text small { display: block; margin-top: 0.25rem; color: var(--color-greet-muted); font: 400 max(0.95rem, 2cqmin)/1.3 var(--font-greet-body); }
+.greet-option-sides { display: flex; gap: 0.35rem; }
+.greet-option-sides button { min-width: 2.75rem; min-height: 2.75rem; background: var(--greet-side); color: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); font: 1rem/1 var(--font-greet-sign); }
+.greet-answer-line { font: 400 max(1.75rem, 4.2cqmin)/1.1 var(--font-greet); }
+.greet-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+.greet-sides li { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.7rem; background: var(--color-greet-cream); border-left: 0.45rem solid var(--greet-side); font: var(--greet-label)/1.3 var(--font-greet-sign); }
+.greet-sides li > span:last-child { display: flex; flex-direction: column; gap: 0.15rem; }
+.greet-sides li strong { font: 400 max(1.4rem, 3.2cqmin)/1 var(--font-greet); }
+.greet-sides li span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.greet-sides li[data-correct=true] { background: var(--greet-side); color: var(--color-greet-sheet); }
+.greet-card-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-top: auto; }
+.greet-card-actions :is(.greet-side-blue, .greet-side-orange) { border-left: 0.45rem solid var(--greet-side); }
+.greet-match { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--greet-gap); width: 100%; }
+.greet-match-side { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.6rem; padding: var(--greet-pad); background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); border-top: 0.6rem solid var(--greet-side); }
+.greet-match-side legend { float: left; width: 100%; margin-bottom: 0.4rem; font: var(--greet-label)/1.3 var(--font-greet-sign); text-transform: uppercase; }
+.greet-match-group { display: flex; flex: 1 1 8rem; flex-direction: column; align-items: flex-start; gap: 0.25rem; padding: 0.6rem 0.8rem; background: var(--color-greet-cream); border: var(--greet-stroke) solid var(--color-greet-night); text-align: left; }
+.greet-match-group strong { font: 400 max(2.25rem, 6cqmin)/1 var(--font-greet); }
+.greet-match-group small { font: var(--greet-label)/1.3 var(--font-greet-sign); }
+.greet-match-group[aria-pressed=true] { background: var(--greet-side); color: var(--color-greet-sheet); box-shadow: var(--shadow-greet-card); }
+.greet-match-name { font: 400 max(2rem, 5cqmin)/1 var(--font-greet); }
+.greet-confetti { position: absolute; inset: 0; z-index: 20; width: 100%; height: 100%; pointer-events: none; }
+.greet-final { align-items: center; text-align: center; }
+.greet-globe { position: relative; width: min(100%, max(14rem, 40cqmin)); aspect-ratio: 1; }
+.greet-globe-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.greet-globe-ring path { fill: var(--color-greet-cream); stroke: var(--color-greet-night); stroke-width: 0.6; transition: fill 0.3s; }
+.greet-globe-ring path[data-lit=true] { fill: var(--color-greet-pink); }
+.greet-globe-icon { position: absolute; inset: 22%; width: 56%; height: 56%; color: var(--color-greet-blue); }
+.greet-globe[data-done=true] .greet-globe-icon { color: var(--color-greet-orange); }
+.greet-setup-players { display: flex; flex-direction: column; gap: 0.5rem; }
+.greet-setup-players li { display: flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.7rem 0.45rem 0.45rem; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); font-weight: 600; }
+.greet-setup-players li > svg { margin-left: auto; width: 1.3rem; height: 1.3rem; }
+.greet-setup-players li[data-found=true] { background: var(--greet-side); color: var(--color-greet-sheet); }
+.greet-tryout { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: var(--greet-pad); text-align: center; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); }
+.greet-tryout > strong { font: 400 max(2rem, 5cqmin)/1 var(--font-greet); }
+.greet-tryout-sign, .greet-tryout-check { width: max(4rem, 12cqmin); height: max(4rem, 12cqmin); }
+.greet-tryout-check { color: var(--color-greet-blue); }
+.greet-tryout[data-passed=true] { background: var(--color-greet-pink); }
+.greet-tryout-seconds { font: max(1.25rem, 3cqmin)/1 var(--font-greet-sign); }
+.greet-tryout .greet-tag-hold { width: 100%; }
+.greet-sign-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
+.greet-sign-grid button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; width: 100%; min-height: 4.5rem; padding: 0.4rem; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); font: 0.8rem/1.2 var(--font-greet-sign); text-align: center; }
+.greet-sign-grid button > svg:first-child { width: 1.8rem; height: 1.8rem; }
+.greet-sign-grid button[aria-pressed=true] { outline: var(--greet-focus) solid var(--color-greet-blue); outline-offset: calc(var(--greet-focus) * -1); }
+.greet-sign-grid button[data-passed=true] { background: var(--color-greet-pink); }
+.greet-sign-done { position: absolute; top: 0.25rem; right: 0.25rem; width: 1rem; height: 1rem; }
+.greet-setup-done { display: flex; align-items: center; justify-content: center; gap: 0.75rem; min-height: max(4.5rem, 12cqmin); padding: 0.75rem 1rem; background: var(--color-greet-sheet); border: var(--greet-stroke) solid var(--color-greet-night); box-shadow: var(--shadow-greet-card); font: 400 max(1.6rem, 4cqmin)/1.05 var(--font-greet); }
+.greet-setup-done svg { width: 1.6em; height: 1.6em; flex-shrink: 0; }
+.greet-setup-done[data-complete=true] { background: var(--color-greet-blue); color: var(--color-greet-sheet); }
+.greet-setup-done:active { transform: translate(var(--greet-move), var(--greet-move)); box-shadow: none; }
+.greet-camera-overlay { position: absolute; pointer-events: none; }
+.greet-flip { transform: rotate(180deg); }
+/* A sign on a player's tag, with its meter: the light bar is how close the player is this frame, the solid bar how long they have held it. */
+.greet-tag-signs { display: flex; gap: 0.35rem; }
+.greet-tag-sign { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.2rem; border: var(--greet-stroke) solid transparent; opacity: 0.45; }
+.greet-tag-sign > svg { width: max(1.6rem, 4cqmin); height: max(1.6rem, 4cqmin); color: var(--greet-side); }
+.greet-tag-sign[data-state=near] { opacity: 1; }
+.greet-tag-sign[data-state=on] { opacity: 1; border-color: var(--greet-side); background: color-mix(in srgb, var(--greet-side) 15%, transparent); }
+.greet-tag-meter, .greet-meter { position: relative; display: block; width: 100%; min-width: 2rem; height: 0.4rem; overflow: hidden; background: color-mix(in srgb, var(--color-greet-night) 12%, transparent); }
+.greet-tag-level, .greet-tag-held { position: absolute; inset: 0; transform-origin: left; }
+.greet-tag-level { transform: scaleX(var(--level, 0)); background: color-mix(in srgb, var(--greet-side) 40%, transparent); }
+.greet-tag-held { transform: scaleX(var(--hold, 0)); background: var(--greet-side); }
+.greet-option { position: relative; }
+.greet-option-meters { display: flex; flex-direction: column; gap: 0.2rem; width: 100%; }
+.greet-options-choice .greet-option-meters { width: 4rem; }
+@media (prefers-reduced-motion: reduce) { .greet-shell *, .greet-shell *::before, .greet-shell *::after { animation: none; transition: none; scroll-behavior: auto; } }
+
+/* Tracked joints and sign status share the players' established colors. */
+.greet-tag-status { font-family: var(--font-greet-sign); font-size: 0.7em; line-height: 1.3; }
+.greet-tag-sign[data-state=accepted] { opacity: 1; border-color: var(--greet-side); background: color-mix(in srgb, var(--greet-side) 25%, var(--color-greet-cream)); }
+.greet-globe-ring path[data-lit=true][data-player="0"] { fill: var(--color-greet-blue); }
+.greet-globe-ring path[data-lit=true][data-player="1"] { fill: var(--color-greet-orange); }
