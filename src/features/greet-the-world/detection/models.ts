@@ -1,9 +1,10 @@
 import type { DrawingUtils, PoseLandmarker } from "@mediapipe/tasks-vision";
 import { InferenceClient } from "./InferenceClient";
+import type { ProcessingMode } from "./protocol";
 
 export interface Models {
   client: InferenceClient;
-  delegate: "GPU" | "CPU";
+  delegate: ProcessingMode;
   DrawingUtils: typeof DrawingUtils;
   lines: { body: typeof PoseLandmarker.POSE_CONNECTIONS; hand: typeof PoseLandmarker.POSE_CONNECTIONS; face: typeof PoseLandmarker.POSE_CONNECTIONS; lips: typeof PoseLandmarker.POSE_CONNECTIONS };
 }

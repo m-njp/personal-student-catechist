@@ -46,23 +46,24 @@ export type Tunable = keyof typeof tunables;
 /** How long a player holds an answer before it counts, in milliseconds. */
 export const hold = { initial: 800, min: 400, max: 2000, step: 100 };
 
-/** How the camera follows the players. Not shown to the teacher. */
+/** How the camera follows its one player. Not shown to the teacher. */
 export const tracking = {
   /** About 25 readings a second, so a sign shows on screen as soon as it is made. */
   everyMs: 40,
-  staleMs: 250,
+  /** A reading older than this means the camera or worker stalled. A slow laptop is still under it. */
+  staleMs: 1000,
   logEveryMs: 250,
   workerTimeoutMs: 10000,
   handAmbiguity: 0.2,
   /**
    * Bodies, hands, and faces each model looks for. A full classroom has many, so there is room to find
-   * the players among the pupils behind them; everyone else is filtered out below.
+   * the player among the pupils behind them; everyone else is filtered out below.
    */
   poses: 6,
   hands: 6,
   faces: 4,
   /** A locked player is followed only by a body at least this wide, so someone behind never takes their place... */
-  followWidth: 0.6,
+  followWidth: 0.7,
   /** ...and no farther than this many shoulder widths from where they were. */
   followMove: 1.5,
   /** A hand or face belongs to a player only this close to their wrist or nose, in shoulder widths. */
@@ -72,11 +73,16 @@ export const tracking = {
    * small hand of a pupil sitting behind a player's arm is never read as theirs.
    */
   handSize: 0.25,
-  /** A player is found again after being out of sight this long. */
-  lostMs: 1500,
+  /** Stable acquisition and recovery; losing a player never expires their identity. */
+  confirmMs: 300,
+  confirmMove: 0.35,
+  centerRange: 0.2,
+  subjectAmbiguity: 0.2,
+  appearanceGap: 0.25,
+  faceNear: 0.6,
   /** Face frames taken as a player's resting face, right after they are found. */
   baselineFrames: 15,
-  /** How often the lighting is checked, and how bright counts as dark, or as a window behind the players (0 to 1). */
+  /** How often the lighting is checked, and how bright counts as dark, or as a window behind the player (0 to 1). */
   lightEveryMs: 1000,
   dark: 0.2,
   backlight: 0.25,

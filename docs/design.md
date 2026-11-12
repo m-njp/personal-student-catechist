@@ -88,15 +88,18 @@ Two games that look like colored paper pinned to a classroom board. Bayanihan Cr
 
 ## Greet the World (Lesson 04)
 
-A camera quiz. Two groups play at once, one player each: Player 1 on the left in blue, Player 2 on the right in orange. Square paper panels and black ink; blue and orange belong to the players only. Bebas Neue for headings, IBM Plex Sans for reading, Space Mono for labels, self-hosted in `src/styles/fonts/greet`.
+A camera quiz. One group sends one player per turn. The player stands in the center and is shown in blue. Square paper panels and black ink; blue marks the player and orange marks feedback. The site's Geist, bold for headings, with Geist Mono for labels, so every word shows in the case it is written. No accent bars: a state shows as a full fill.
 
-- The class sits behind the players, so the detector reads only people standing close: shoulders smaller than the player size are never read, a locked player can only be followed by someone about as close, and a hand counts only when it is big enough for the player beside it. The teacher can tune the player size in the panel.
-- The camera stays quiet: a joint-dotted skeleton in each player's color, nobody else drawn, and a numbered tag over each head showing the sign the camera sees and a bar that fills while it is held.
+- The class sits behind the player, so the detector reads only people standing close: shoulders smaller than the player size are never read, a locked player can only be followed by someone about as close, and a hand counts only when it is big enough for the player beside it. The teacher can tune the player size in the panel.
+- The camera stays quiet: one joint-dotted skeleton, nobody else drawn, and a tag over the player's head showing the sign the camera sees and a bar that fills while it is held.
 - A match plays every question in `greet.ts` in order and runs by itself: each card shows with a 3, 2, 1, its timer starts, and the result shows before the next card. Teacher keys and buttons answer through the same path as the camera. A faster right answer scores more.
 - Each question names its answer signs, so a true or false can be thumbs, or a smile and a surprised face. Every sign the questions use is tried one at a time in Setup, with the seconds held and a chime when it passes.
-- The final round uses the two tracked players. Each holds two open palms to light their own half of the globe. Both players must be present and confirmed.
+- The final round uses the one tracked player, holding two open palms to light the globe.
 - Music plays under a match; short sounds mark the countdown, the start, each result, and the finish. The clips and music come from `tools/greet-art`. The camera runtime and models are not committed: `npm run dev` and `npm run build` fetch them there, checked against pinned hashes.
-- Inference runs in a worker with one frame in flight. Stale results never count. Hand ownership is one-to-one with visible player wrists, and all meters use the same time-based confirmation as scoring.
+- Setup shows the processing mode (GPU, CPU, or both), so the teacher knows when detection may be slow. The camera itself shows only the player, the guidance line, and Find player again.
+- Inference runs in a worker with one frame in flight. A result counts only if the camera and worker have not stalled, and a slow laptop is not a stall. Hand ownership is one-to-one with visible player wrists, and all meters use the same time-based confirmation as scoring.
+- The models run in video mode, so a hand is followed from its last place. Searching each frame from scratch (image mode) lost far, tilted, and downward hands.
+- The player is found by standing still in the center, and followed by position and body size; ambiguous matches pause camera answers. After a loss, only the same clothing color, kept in memory, brings them back. A standing outline guides them there without expiring the lock. Find player again deliberately clears it and the face calibration.
 - No picture or landmark leaves the laptop. Only scores and settings are saved, on this laptop.
 
 ## Performance
