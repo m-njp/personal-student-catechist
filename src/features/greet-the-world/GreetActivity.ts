@@ -6,7 +6,7 @@ import { createGreetStore, type GreetStore } from "./game/store";
 /** The short sounds: the 3, 2, 1, the timer starting, an answer, a sign passing in setup, and the finish. */
 export type GreetSound = "count" | "go" | "right" | "wrong" | "pass" | "cheer";
 
-/** Greet the World: two players at a time answer with their hands, face, and body in front of the camera. */
+/** Greet the World: one player at a time answer with their hands, face, and body in front of the camera. */
 export class GreetActivity extends Activity<League | null> {
   static readonly TYPE = "greet-the-world";
 

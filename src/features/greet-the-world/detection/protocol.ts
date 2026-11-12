@@ -1,5 +1,8 @@
 import type { FaceLandmarkerResult, GestureRecognizerResult, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
 
+/** Selected processing modes across the loaded camera models. */
+export type ProcessingMode = "GPU" | "CPU" | "Mixed";
+
 export interface FrameRequest {
   type: "frame";
   image: ImageBitmap;
@@ -19,4 +22,4 @@ export interface Inference {
   inferenceMs: number;
 }
 export type WorkerRequest = { type: "init"; base: string } | FrameRequest | { type: "close" };
-export type WorkerResponse = { type: "step"; step: number } | { type: "ready"; delegate: "GPU" | "CPU" } | { type: "result"; result: Inference } | { type: "error"; message: string };
+export type WorkerResponse = { type: "step"; step: number } | { type: "ready"; delegate: ProcessingMode } | { type: "result"; result: Inference } | { type: "error"; message: string };

@@ -22,8 +22,6 @@ interface SetupCheckProps {
   onContinue: () => void;
 }
 
-const SIDE_CLASS = ["greet-side-blue", "greet-side-orange"];
-
 // One list per sign, kept, so the loop is not told its target changed on every render.
 const single = new Map<Reading, readonly Reading[]>();
 const only = (reading: Reading) => {
@@ -32,7 +30,7 @@ const only = (reading: Reading) => {
 };
 
 /**
- * The teacher's check before class. Both players are found, then each sign the questions use is tried
+ * The teacher's check before class. One player is found, then each sign the questions use is tried
  * one at a time: the seconds held count up, and a big check and a sound mark each one. When every sign
  * has passed, one big button starts the game.
  */
@@ -49,16 +47,17 @@ export function SetupCheck({ content, models, log, settings, play, onContinue }:
   const bar = useRef<HTMLSpanElement>(null);
   const words = content.setup;
   const Sign = SIGN_ICONS[current];
+  const processing = content.camera.processing[models.delegate];
 
   useEffect(() => {
     loop?.target(targets);
   }, [loop, targets]);
 
-  // The seconds held, from whichever player is closest to passing.
+  // The seconds held by the one player.
   useEffect(
     () =>
       loop?.onFrame((frame) => {
-        const held = Math.max(0, ...frame.players.map((player) => player?.hold[current] ?? 0));
+        const held = frame.player?.hold[current] ?? 0;
         if (seconds.current) seconds.current.textContent = fill(words.holding, { n: ((held * settings.holdMs) / 1000).toFixed(1), all: (settings.holdMs / 1000).toFixed(1) });
         if (bar.current) bar.current.style.transform = `scaleX(${held})`;
       }),
@@ -76,28 +75,27 @@ export function SetupCheck({ content, models, log, settings, play, onContinue }:
   return (
     <div className="greet-page greet-workspace">
       <div className="greet-camera-workspace">
-        <CameraStage content={content} models={models} loop={loop} view={view} onVideo={onVideo} targets={targets} names={[content.players[0], content.players[1]]} />
+        <CameraStage content={content} models={models} loop={loop} view={view} onVideo={onVideo} targets={targets} name={content.player} />
         <DetectorPanel content={content} models={models} loop={loop} log={log} thresholds={settings.thresholds} targets={targets} />
       </div>
       <aside className="greet-sidebar">
         <h2 className="greet-heading">{words.title}</h2>
 
-        <ul className="greet-setup-players">
-          {content.players.map((name, i) => {
-            const found = view?.players[i]?.found === true;
-            return (
-              <li key={name} className={SIDE_CLASS[i]} data-found={found}>
-                <span className="greet-side-badge">{i + 1}</span>
-                {fill(found ? words.found : words.missing, { player: name })}
-                {found ? <CheckIcon aria-hidden weight="bold" /> : <UserIcon aria-hidden />}
-              </li>
-            );
-          })}
-        </ul>
+        <p className="greet-setup-player" data-found={view?.player?.found === true} role="status">
+          {fill(view?.player?.found ? words.found : words.missing, { player: content.player })}
+          {view?.player?.found ? <CheckIcon aria-hidden weight="bold" /> : <UserIcon aria-hidden />}
+        </p>
 
         {view?.light && (
           <p className={`greet-setup-block greet-setup-light ${view.light === "ok" ? "" : "greet-setup-warning"}`} role="status">
             {view.light === "ok" ? <><CheckIcon aria-hidden />{words.lighting}</> : view.light === "backlit" ? words.backlit : words.dark}
+          </p>
+        )}
+
+        {view?.status === "running" && (
+          <p className={`greet-setup-block ${models.delegate === "GPU" ? "" : "greet-setup-warning"}`}>
+            <strong>{processing.label}</strong>
+            {processing.hint}
           </p>
         )}
 
@@ -133,9 +131,6 @@ export function SetupCheck({ content, models, log, settings, play, onContinue }:
           })}
         </ul>
 
-        <button type="button" className="greet-text-button" onClick={() => loop?.relock()}>
-          {words.findAgain}
-        </button>
         <p className="greet-hint">{words.privacy}</p>
       </aside>
     </div>

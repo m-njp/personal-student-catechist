@@ -1,6 +1,7 @@
 import type { FaceLandmarker, GestureRecognizer, PoseLandmarker } from "@mediapipe/tasks-vision";
 
 import { tracking } from "./config";
+import type { ProcessingMode } from "./protocol";
 
 type Delegate = "GPU" | "CPU";
 
@@ -9,8 +10,8 @@ export interface Detectors {
   pose: PoseLandmarker;
   gesture: GestureRecognizer;
   face: FaceLandmarker;
-  /** GPU unless a model could only start on the CPU. */
-  delegate: Delegate;
+  /** Actual processing modes selected by the three loaded models. */
+  delegate: ProcessingMode;
 }
 
 /** Tries the GPU first, and the CPU when the GPU will not start, as on some school laptops. */
@@ -25,6 +26,9 @@ async function create<T>(make: (delegate: Delegate) => Promise<T>): Promise<[T, 
 /**
  * Loads the models from this site, so class never waits on the school's internet for them.
  * `step` is told which of the three is loading. The caller closes them with `closeDetectors`.
+ *
+ * Video mode, so each model follows a hand, face, or body from its last place. Image mode searches
+ * every frame from scratch, and its palm search misses far, tilted, and downward hands.
  */
 export async function loadDetectors(base: string, step: (index: number) => void, loadRuntime = importRuntime): Promise<Detectors> {
   const vision = await import("@mediapipe/tasks-vision");
@@ -80,7 +84,7 @@ export async function loadDetectors(base: string, step: (index: number) => void,
       pose,
       gesture,
       face,
-      delegate: [poseOn, gestureOn, faceOn].includes("CPU") ? "CPU" : "GPU",
+      delegate: poseOn === gestureOn && poseOn === faceOn ? poseOn : "Mixed",
     };
   } catch (error) {
     for (const loaded of made) loaded.close();

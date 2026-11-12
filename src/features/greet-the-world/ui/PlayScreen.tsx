@@ -37,7 +37,6 @@ interface PlayScreenProps {
   sound: boolean;
 }
 
-const SIDE_CLASS = ["greet-side-blue", "greet-side-orange"];
 const ON_CAMERA = new Set(["card", "running", "result", "final"]);
 
 interface LiveCameraProps {
@@ -47,16 +46,15 @@ interface LiveCameraProps {
   settings: CameraSettings;
   session: QuizSession;
   state: QuizState;
-  names: readonly [string, string];
-  /** The card beside the camera, which shows each player's meters on its answers. */
+  name: string;
+  /** The card beside the camera, which shows the player's meters on its answers. */
   panel: (loop: CameraLoop | null) => ReactNode;
 }
 
-function LiveCamera({ content, models, log, settings, session, state, names, panel }: LiveCameraProps) {
+function LiveCamera({ content, models, log, settings, session, state, name, panel }: LiveCameraProps) {
   const { loop, view, onVideo } = useLiveCamera(models, log, settings);
   const final = state.phase === "final";
   const targets = useMemo<readonly Reading[]>(() => (final ? ["twoOpenPalms"] : state.challenge ? signsOf(state.challenge) : []), [final, state.challenge]);
-  const answered = useMemo(() => state.sides.map((side) => side.answered), [state.sides]);
 
   useEffect(() => {
     loop?.target(state.paused ? [] : targets);
@@ -66,7 +64,7 @@ function LiveCamera({ content, models, log, settings, session, state, names, pan
 
   return (
     <>
-      <CameraStage content={content} models={models} loop={loop} view={view} onVideo={onVideo} targets={targets} names={names} answered={answered} />
+      <CameraStage content={content} models={models} loop={loop} view={view} onVideo={onVideo} targets={targets} name={name} answered={state.turn.answered} />
       {panel(loop)}
     </>
   );
@@ -81,15 +79,15 @@ function useMatchSounds(state: QuizState, play: (sound: GreetSound) => void, cel
     if (state.phase === "card" && state.countdown > 0 && (last.countdown !== state.countdown || last.index !== state.index)) play("count");
     if (state.phase === last.phase) return;
     if (state.phase === "running") play("go");
-    if (state.phase === "result") play(state.sides.some((side) => side.correct) ? "right" : "wrong");
-    if (state.phase === "matchEnd" || state.phase === "finalScores") {
+    if (state.phase === "result") play(state.turn.correct ? "right" : "wrong");
+    if (state.phase === "turnEnd" || state.phase === "finalScores") {
       play("cheer");
       celebrate();
     }
   }, [state, play, celebrate]);
 }
 
-/** The match: both groups' scores across the top, the camera, and the card beside it. Between matches, the scores. */
+/** One group per turn, with the camera and card beside each other. */
 export function PlayScreen({ content, scores, models, cameraLoading, log, settings, store, play, music, sound }: PlayScreenProps) {
   const { session, state } = useQuizSession(content, store);
   useQuizControls(session);
@@ -99,10 +97,10 @@ export function PlayScreen({ content, scores, models, cameraLoading, log, settin
   useMatchSounds(state, play, celebrate);
   useMusic(music, sound && ON_CAMERA.has(state.phase));
   const words = content.quiz;
-  const names = state.sides.map((side) => fill(content.group, { n: side.group + 1 })) as [string, string];
   const final = state.phase === "final";
+  const name = final ? content.player : fill(content.group, { n: state.turn.group + 1 });
   const panel = (loop: CameraLoop | null) =>
-    final ? <FinalRound content={content} finalPlayers={state.finalPlayers} /> : <ChallengePanel content={content} session={session} state={state} loop={loop} />;
+    final ? <FinalRound content={content} finalReady={state.finalReady} /> : <ChallengePanel content={content} session={session} state={state} loop={loop} />;
 
   let body;
   if (!ON_CAMERA.has(state.phase)) {
@@ -110,22 +108,14 @@ export function PlayScreen({ content, scores, models, cameraLoading, log, settin
     body = (
       <div className="greet-page greet-scoreboard">
         {state.phase === "scoreboard" && (
-          <>
-            <h2 className="greet-heading">{words.match}</h2>
-            <Scoreboard content={content} scores={scores} played={played} onMatch={(blue, orange) => session.pickMatch(blue, orange)} onFinal={() => session.startFinal()} />
-          </>
+          <Scoreboard content={content} scores={scores} played={played} onTurn={(group) => session.startTurn(group)} onFinal={() => session.startFinal()} />
         )}
-        {state.phase === "matchEnd" && (
+        {state.phase === "turnEnd" && (
           <>
-            <h2 className="greet-heading">{words.matchEnd}</h2>
-            <div className="greet-match">
-              {state.sides.map((side, i) => (
-                <div key={SIDE_CLASS[i]} className={`greet-match-side ${SIDE_CLASS[i]}`}>
-                  <span className="greet-side-badge">{i + 1}</span>
-                  <strong className="greet-match-name">{names[i]}</strong>
-                  <strong className="greet-turn-score">{fill(words.points, { n: side.score })}</strong>
-                </div>
-              ))}
+            <h2 className="greet-heading">{words.turnEnd}</h2>
+            <div className="greet-sheet greet-turn-card">
+              <strong className="greet-match-name">{name}</strong>
+              <strong className="greet-turn-score">{fill(words.points, { n: state.turn.score })}</strong>
             </div>
             <div className="greet-tool-row">
               <KeyButton tone="play" onClick={() => session.next()}>
@@ -168,18 +158,12 @@ export function PlayScreen({ content, scores, models, cameraLoading, log, settin
       <div className="greet-page greet-play">
         {!final && (
           <div className="greet-match-bar">
-            {state.sides.map((side, i) => (
-              <span key={SIDE_CLASS[i]} className={SIDE_CLASS[i]}>
-                <span className="greet-side-badge">{i + 1}</span>
-                {names[i]}
-                <strong>{side.score}</strong>
-              </span>
-            ))}
+            <span>{name}<strong>{state.turn.score}</strong></span>
           </div>
         )}
         <div className="greet-play-workspace">
           {models ? (
-            <LiveCamera content={content} models={models} log={log} settings={settings} session={session} state={state} names={names} panel={panel} />
+            <LiveCamera content={content} models={models} log={log} settings={settings} session={session} state={state} name={name} panel={panel} />
           ) : (
             <>
               <div className="greet-manual-stage">

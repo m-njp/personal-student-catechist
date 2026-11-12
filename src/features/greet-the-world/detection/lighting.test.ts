@@ -34,14 +34,14 @@ describe("the lighting check", () => {
 describe("the detection log", () => {
   it("keeps only the latest entries", () => {
     const log = new DetectionLog(3);
-    for (let i = 0; i < 5; i++) log.event({ what: "on", player: "blue", reading: "happy" });
+    for (let i = 0; i < 5; i++) log.event({ what: "on", reading: "happy" });
     expect(log.getSnapshot().map((event) => event.n)).toEqual([3, 4, 5]);
   });
 
   it("exports numbers only, with the thresholds used", () => {
     const log = new DetectionLog();
-    log.frame([{ happy: 0.8 }, null]);
+    log.frame({ happy: 0.8 });
     const exported = JSON.parse(log.export({ smile: 0.5 }));
-    expect(exported).toMatchObject({ thresholds: { smile: 0.5 }, events: [], frames: [{ levels: [{ happy: 0.8 }, null] }] });
+    expect(exported).toMatchObject({ thresholds: { smile: 0.5 }, events: [], frames: [{ levels: { happy: 0.8 } }] });
   });
 });
