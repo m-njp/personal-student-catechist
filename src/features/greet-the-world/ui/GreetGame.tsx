@@ -8,7 +8,6 @@ import type { GreetActivity } from "../GreetActivity";
 import { DetectionLog } from "../detection/DetectionLog";
 import { useModels } from "../detection/useCamera";
 import { useGreet } from "../game/useGreet";
-import { greetFonts } from "./fonts";
 import { FieldHeader, type FieldStep } from "./FieldHeader";
 import { GuideScreen } from "./GuideScreen";
 import { Loading } from "./Loading";
@@ -44,7 +43,7 @@ export function GreetGame({ activity }: { activity: GreetActivity }) {
   else if (screen === "setup" && models.models) body = <SetupCheck content={content} models={models.models} log={log} settings={camera} play={play} onContinue={() => go("guide")} />;
   else body = <PlayScreen content={content} scores={scores} models={settings.noCamera ? null : models.models} cameraLoading={!settings.noCamera && !models.models ? models : undefined} log={log} settings={camera} store={store} play={play} music={activity.music} sound={settings.sound} />;
   return <div className={fullscreen.active ? "fixed inset-0 z-50 flex min-h-0 flex-col bg-greet-cream" : "flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3 lg:px-10 lg:pb-6"}>
-    <div className={`${greetFonts} ${look}`}>
+    <div className={look}>
       {screen !== "title" && <FieldHeader content={content} step={screen} onStep={go} onHome={() => setScreen("title")} />}
       {body}
       <div className="greet-corner-tools"><TeacherPanel content={content} store={store} /><button type="button" aria-label={fullscreen.active ? content.teacher.leaveFullScreen : content.teacher.fullScreen} onClick={fullscreen.active ? fullscreen.exit : fullscreen.enter} className={cornerButton}>{fullscreen.active ? <CornersInIcon aria-hidden /> : <CornersOutIcon aria-hidden />}</button></div>

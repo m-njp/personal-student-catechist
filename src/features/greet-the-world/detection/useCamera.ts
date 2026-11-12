@@ -72,7 +72,7 @@ export function useCamera(models: Models | null, video: HTMLVideoElement | null,
 const noView = () => null;
 const noSubscribe = () => () => {};
 
-/** What the loop shows: the camera's state, the players, and their readings. Null before it starts. */
+/** What the loop shows: the camera's state, the player, and their readings. Null before it starts. */
 export function useCameraView(loop: CameraLoop | null): CameraView | null {
   return useSyncExternalStore(loop?.subscribe ?? noSubscribe, loop?.getSnapshot ?? noView, noView);
 }

@@ -20,6 +20,11 @@ describe("worker transport", () => {
     c.deliver({ type: "result", result: { timestamp: 100, run: 1, generation: 0, inferenceMs: 10, pose: { landmarks: [] }, hands: { landmarks: [], gestures: [] }, face: { faceLandmarks: [], faceBlendshapes: [] } } });
     await expect(first).resolves.toMatchObject({ timestamp: 100 }); expect(c.instance.busy).toBe(false); c.instance.close();
   });
+  it("preserves mixed processing reported by the worker", async () => {
+    const c = client(); const ready = c.instance.initialize("/models");
+    c.deliver({ type: "ready", delegate: "Mixed" });
+    await expect(ready).resolves.toBe("Mixed"); c.instance.close();
+  });
   it("rejects pending initialization on unmount", async () => {
     const c = client(); const ready = c.instance.initialize("/models"); const rejected = expect(ready).rejects.toThrow("closed");
     c.instance.close(); await rejected; expect(c.worker.terminate).toHaveBeenCalledOnce();

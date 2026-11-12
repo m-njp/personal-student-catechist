@@ -2,18 +2,16 @@ import { CheckIcon, XIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, type ReactNode } from "react";
 import { fill, signsOf, type Challenge, type GreetContent } from "../content";
 import type { CameraLoop } from "../detection/CameraLoop";
-import type { Player, QuizSession, QuizState, Side } from "../game/QuizSession";
+import type { QuizSession, QuizState, Turn } from "../game/QuizSession";
 import { SIGN_ICONS } from "./signs";
 
 interface ChallengePanelProps {
   content: GreetContent;
   session: QuizSession;
   state: QuizState;
-  /** The camera, so each answer shows both players' meters as they make its sign. Null without a camera. */
+  /** The camera, so each answer shows the player's meters as they make its sign. Null without a camera. */
   loop: CameraLoop | null;
 }
-
-const SIDE_CLASS = ["greet-side-blue", "greet-side-orange"];
 
 /** A card's answers, each with the sign that gives it. A pose has one tile: the action itself. */
 function tilesOf(card: Challenge, content: GreetContent) {
@@ -39,12 +37,12 @@ function hintOf(card: Challenge, content: GreetContent): string {
     .join(" ");
 }
 
-/** One group's line under the card: thinking, answered, or how it went. */
-function sideLine(side: Side, state: QuizState, content: GreetContent): ReactNode {
+/** The line under the card: waiting, answered, or how it went. */
+function turnLine(turn: Turn, state: QuizState, content: GreetContent): ReactNode {
   const words = content.quiz;
-  if (state.phase !== "result") return side.answered ? words.answered : words.waiting;
-  if (side.correct) return <><CheckIcon aria-hidden weight="bold" />{words.right} {fill(words.points, { n: side.earned })}</>;
-  return <><XIcon aria-hidden weight="bold" />{side.answered ? words.oops : words.timeUp}</>;
+  if (state.phase !== "result") return turn.answered ? words.answered : words.waiting;
+  if (turn.correct) return <><CheckIcon aria-hidden weight="bold" />{words.right} {fill(words.points, { n: turn.earned })}</>;
+  return <><XIcon aria-hidden weight="bold" />{turn.answered ? words.oops : words.timeUp}</>;
 }
 
 /**
@@ -56,14 +54,14 @@ export function ChallengePanel({ content, session, state, loop }: ChallengePanel
   const card = state.challenge;
   const list = useRef<HTMLUListElement>(null);
 
-  // Each answer's two bars follow the players' signs every frame: how close, then how long it is held.
+  // Each answer shows the player's sign strength and hold duration.
   useEffect(() => {
     const tiles = list.current;
     if (!loop || !tiles) return;
     const meters = tiles.querySelectorAll<HTMLElement>("[data-meter]");
     return loop.onFrame((frame) => {
       meters.forEach((meter) => {
-        const player = frame.players[Number(meter.dataset.player)];
+        const player = frame.player;
         const sign = meter.dataset.meter as keyof NonNullable<typeof player>["hold"];
         meter.style.setProperty("--level", String(Math.min(1, player?.shown[sign] ?? 0)));
         meter.style.setProperty("--hold", String(player?.hold[sign] ?? 0));
@@ -74,7 +72,7 @@ export function ChallengePanel({ content, session, state, loop }: ChallengePanel
   if (!card) return null;
   const answering = state.phase === "running";
   const result = state.phase === "result";
-  const groups = state.sides.map((side) => fill(content.group, { n: side.group + 1 }));
+  const group = fill(content.group, { n: state.turn.group + 1 });
   const tiles = tilesOf(card, content);
 
   return (
@@ -102,27 +100,16 @@ export function ChallengePanel({ content, session, state, loop }: ChallengePanel
                 {card.kind !== "pose" && <small>{content.readings[tile.sign].label}</small>}
               </span>
               <span className="greet-option-meters" aria-hidden>
-                {state.sides.map((side, i) => (
-                  <span key={SIDE_CLASS[i]} data-meter={tile.sign} data-player={i} className={`greet-meter ${SIDE_CLASS[i]}`}>
-                    <span className="greet-tag-level" />
-                    <span className="greet-tag-held" />
-                  </span>
-                ))}
+                <span data-meter={tile.sign} className="greet-meter">
+                  <span className="greet-tag-level" /><span className="greet-tag-held" />
+                </span>
               </span>
               {answering && tile.value !== null && (
                 <span className="greet-option-sides">
-                  {state.sides.map((side, i) => (
-                    <button
-                      key={SIDE_CLASS[i]}
-                      type="button"
-                      className={SIDE_CLASS[i]}
-                      disabled={state.paused || side.answered}
-                      aria-label={`${groups[i]}: ${tile.text}`}
-                      onClick={() => session.answer(tile.value, i as Player)}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                  <button type="button" disabled={state.paused || state.turn.answered}
+                    aria-label={`${group}: ${tile.text}`} onClick={() => session.answer(tile.value)}>
+                    {tile.mark ?? tile.text}
+                  </button>
                 </span>
               )}
             </li>
@@ -131,42 +118,13 @@ export function ChallengePanel({ content, session, state, loop }: ChallengePanel
       </ul>
       <p className="greet-quiz-hint">{hintOf(card, content)}</p>
       {result && state.answer && <p className="greet-answer-line">{fill(words.answerIs, { answer: state.answer })}</p>}
-
-      <ul className="greet-sides">
-        {state.sides.map((side, i) => (
-          <li key={SIDE_CLASS[i]} className={SIDE_CLASS[i]} data-correct={result ? side.correct : undefined}>
-            <span className="greet-side-badge">{i + 1}</span>
-            <span>
-              <strong>{groups[i]}</strong>
-              <span>{sideLine(side, state, content)}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="greet-card-actions">
-        <div className="greet-tool-row">
-          <button type="button" className="greet-tool" onClick={() => session.pause()}>
-            {state.paused ? words.resume : words.pause}
-          </button>
-          <button type="button" className="greet-tool" disabled={result} onClick={() => session.skip()}>
-            {words.skip}
-          </button>
-          {answering &&
-            card.kind === "pose" &&
-            state.sides.map((side, i) => (
-              <button
-                key={SIDE_CLASS[i]}
-                type="button"
-                className={`greet-tool ${SIDE_CLASS[i]}`}
-                disabled={state.paused || side.answered}
-                onClick={() => session.mark(true, i as Player)}
-              >
-                {fill(words.markDone, { group: groups[i] })}
-              </button>
-            ))}
-        </div>
-      </div>
+      <p className="greet-turn-line" data-correct={result ? state.turn.correct : undefined}>{turnLine(state.turn, state, content)}</p>
+      <div className="greet-card-actions"><div className="greet-tool-row">
+        <button type="button" className="greet-tool" onClick={() => session.pause()}>{state.paused ? words.resume : words.pause}</button>
+        <button type="button" className="greet-tool" disabled={result} onClick={() => session.skip()}>{words.skip}</button>
+        {answering && card.kind === "pose" && <button type="button" className="greet-tool"
+          disabled={state.paused || state.turn.answered} onClick={() => session.mark(true)}>{fill(words.markDone, { group })}</button>}
+      </div></div>
     </section>
   );
 }

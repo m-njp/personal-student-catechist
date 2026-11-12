@@ -10,7 +10,8 @@ const ready = (overrides: Partial<CameraView> = {}): CameraView => ({
   error: null,
   aspect: 16 / 9,
   locked: true,
-  players: [player],
+  player,
+  guidance: null,
   detected: 1,
   light: "ok",
   passed: signs,
@@ -42,7 +43,7 @@ describe("setup completion", () => {
   it("needs a running camera and a found player even after the signs pass", () => {
     expect(setupStatus(ready({ status: "starting" }), signs).complete).toBe(false);
     expect(setupStatus(ready({ locked: false }), signs).complete).toBe(false);
-    expect(setupStatus(ready({ players: [player, { ...player, found: false }] }), signs).complete).toBe(false);
+    expect(setupStatus(ready({ player: { ...player, found: false } }), signs).complete).toBe(false);
   });
 
   it("does not wait on lighting advice", () => {

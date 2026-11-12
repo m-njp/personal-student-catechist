@@ -1,5 +1,5 @@
 import { tracking } from "./config";
-import type { FrameRequest, Inference, WorkerRequest, WorkerResponse } from "./protocol";
+import type { FrameRequest, Inference, ProcessingMode, WorkerRequest, WorkerResponse } from "./protocol";
 
 type Pending = { resolve: (result: Inference) => void; reject: (error: Error) => void; timer: ReturnType<typeof setTimeout> };
 
@@ -9,10 +9,10 @@ export class InferenceClient {
   private pending: Pending | null = null;
   private failLoading: ((error: Error) => void) | null = null;
   private base = "";
-  private ready: Promise<"GPU" | "CPU"> | null = null;
+  private ready: Promise<ProcessingMode> | null = null;
   constructor(private readonly makeWorker: () => Worker) {}
 
-  initialize(base = this.base, step: (index: number) => void = () => {}): Promise<"GPU" | "CPU"> {
+  initialize(base = this.base, step: (index: number) => void = () => {}): Promise<ProcessingMode> {
     if (this.ready) return this.ready;
     this.base = base;
     const worker = this.makeWorker();

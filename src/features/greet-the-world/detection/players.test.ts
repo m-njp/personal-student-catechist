@@ -1,80 +1,102 @@
 import { describe, expect, it } from "vitest";
-import { defaultThresholds as t } from "./config";
-import { POSE, type Point } from "./geometry";
-import { bodies, follow, lockPlayers, owners } from "./players";
+import { defaultThresholds as t, tracking } from "./config";
+import { POSE } from "./geometry";
+import { bodies, ownFace, SubjectTracker, type Body } from "./players";
 import { person } from "./samplePoses";
 
-const near = (x: number) => person(x, {}, 0.24);
-const behind = (x: number) => person(x, {}, 0.09);
-const at = (x: number, y: number): Point => ({ x, y, visibility: 1 });
+const aspect = 16 / 9;
+const shirt = [1, 0, 0], other = [0, 1, 0];
+const body = (x = aspect / 2, appearance: readonly number[] | null = shirt, width = 0.24): Body =>
+  ({ ...bodies([person(x, {}, width)], t)[0], appearance });
+function locked() {
+  const tracker = new SubjectTracker();
+  const player = body();
+  tracker.observe([player], aspect, 0);
+  expect(tracker.observe([player], aspect, tracking.confirmMs)).toBe(player);
+  return { tracker, player };
+}
 
-describe("finding the two closest players", () => {
-  it("locks the two widest bodies, Blue on the left, and never someone behind them", () => {
-    const pair = lockPlayers(bodies([behind(0.9), near(1.2), near(0.6)], t));
-    expect(pair?.map((spot) => spot.center.x)).toEqual([expect.closeTo(0.6), expect.closeTo(1.2)]);
+describe("one stable player", () => {
+  it("waits for a centered person to stand still before locking", () => {
+    const tracker = new SubjectTracker();
+    expect(tracker.observe([body(0.2)], aspect, 0)).toBeNull();
+    expect(tracker.observe([body()], aspect, 100)).toBeNull();
+    expect(tracker.observe([body()], aspect, 399)).toBeNull();
+    expect(tracker.observe([body()], aspect, 400)).not.toBeNull();
   });
-
-  it("locks a lone player without taking someone far behind as the second", () => {
-    expect(lockPlayers(bodies([near(0.9), behind(1.2)], t))).toHaveLength(1);
-    expect(lockPlayers([])).toBeNull();
+  it("does not acquire ambiguous candidates or hidden and distant bodies", () => {
+    const tracker = new SubjectTracker();
+    expect(tracker.observe([body(aspect / 2 - 0.03), body(aspect / 2 + 0.03)], aspect, 0)).toBeNull();
+    const hidden = person(0.9).map((point, i) => i === POSE.leftShoulder ? { ...point, visibility: 0.1 } : point);
+    expect(bodies([hidden, person(0.9, {}, 0.08)], t)).toEqual([]);
   });
-
-  it("never counts a pupil sitting at the back, smaller than the player size", () => {
-    const seated = person(0.9, {}, t.playerSize * 0.7);
-    expect(bodies([seated, near(0.6)], t)).toHaveLength(1);
-    expect(lockPlayers(bodies([seated], t))).toBeNull();
+  it("keeps the one player when another person enters or is wider", () => {
+    const { tracker, player } = locked();
+    const intruder = body(1.1, other, 0.34);
+    expect(tracker.observe([intruder, player], aspect, 400)).toBe(player);
+    expect(tracker.spot?.width).toBe(player.width);
   });
-
-  it("skips a body whose shoulders are hidden", () => {
-    const hidden = near(0.9).map((point, i) => (i === POSE.leftShoulder ? { ...point, visibility: 0.1 } : point));
-    expect(bodies([hidden], t)).toEqual([]);
+  it("pauses on an ambiguous crossing instead of swapping people", () => {
+    const { tracker } = locked();
+    expect(tracker.observe([body(0.86), body(0.92)], aspect, 400)).toBeNull();
+    expect(tracker.spot).not.toBeNull();
+  });
+  it("locks without a clothing reading, or when the reading changes while still", () => {
+    const tracker = new SubjectTracker();
+    tracker.observe([body(aspect / 2, null)], aspect, 0);
+    expect(tracker.observe([body(aspect / 2, null)], aspect, tracking.confirmMs)).not.toBeNull();
+    const next = new SubjectTracker();
+    next.observe([body(aspect / 2, shirt)], aspect, 0);
+    expect(next.observe([body(aspect / 2, other)], aspect, tracking.confirmMs)).not.toBeNull();
+  });
+  it("keeps following a player whose clothing reading shifts frame to frame", () => {
+    const { tracker } = locked();
+    const shifted = body(aspect / 2, other);
+    expect(tracker.observe([shifted], aspect, 400)).toBe(shifted);
+  });
+  it("rejects a different shirt in the tracked position after a loss", () => {
+    const { tracker } = locked(); tracker.lose();
+    expect(tracker.observe([body(aspect / 2, other)], aspect, 400)).toBeNull();
+    expect(tracker.guidance).toBe("return");
+  });
+  it("retains the lock through prolonged loss and resumes the same player after confirmation", () => {
+    const { tracker, player } = locked();
+    tracker.observe([], aspect, 400);
+    expect(tracker.observe([body(aspect / 2, other)], aspect, 60000)).toBeNull();
+    expect(tracker.spot).toBe(player);
+    expect(tracker.observe([player], aspect, 60100)).toBeNull();
+    expect(tracker.guidance).toBe("hold");
+    expect(tracker.observe([player], aspect, 60400)).toBe(player);
+  });
+  it("does not recover without appearance evidence", () => {
+    const { tracker } = locked(); tracker.lose();
+    expect(tracker.observe([body(aspect / 2, null)], aspect, 60000)).toBeNull();
+    expect(tracker.observe([body(aspect / 2, null)], aspect, 90000)).toBeNull();
+  });
+  it("gives mirrored directions, distance and height guidance without accepting an unmatched person", () => {
+    const { tracker } = locked();
+    tracker.observe([body(1.3, other)], aspect, 400); expect(tracker.guidance).toBe("left");
+    tracker.observe([body(0.5, other)], aspect, 500); expect(tracker.guidance).toBe("right");
+    tracker.observe([body(aspect / 2, other, 0.15)], aspect, 600); expect(tracker.guidance).toBe("closer");
+    tracker.observe([body(aspect / 2, other, 0.4)], aspect, 700); expect(tracker.guidance).toBe("back");
+    const low = body(aspect / 2, other); low.center = { ...low.center, y: 0.7 };
+    tracker.observe([low], aspect, 800); expect(tracker.guidance).toBe("up");
+  });
+  it("reset explicitly permits a new player", () => {
+    const { tracker } = locked(); tracker.reset();
+    const next = body(aspect / 2, other);
+    expect(tracker.observe([next], aspect, 1000)).toBeNull();
+    expect(tracker.observe([next], aspect, 1300)).toBe(next);
   });
 });
-
-describe("following the locked players", () => {
-  const spots = lockPlayers(bodies([near(0.6), near(1.2)], t));
-  if (!spots) throw new Error("expected a pair");
-
-  it("keeps each player as they move a little, so the labels never swap", () => {
-    const [blue, orange] = follow(spots, bodies([near(1.15), near(0.65)], t));
-    expect(blue?.center.x).toBeCloseTo(0.65);
-    expect(orange?.center.x).toBeCloseTo(1.15);
-  });
-
-  it("never lets someone behind take a player's place", () => {
-    const [blue, orange] = follow(spots, bodies([behind(0.6), near(1.2)], t));
-    expect(blue).toBeNull();
-    expect(orange?.center.x).toBeCloseTo(1.2);
-  });
-
-  it("loses a player who jumps too far in one frame", () => {
-    expect(follow(spots, bodies([near(1.5), near(1.2)], t))[0]).toBeNull();
-  });
-});
-
-describe("giving hands and faces to players", () => {
-  const players = follow(lockPlayers(bodies([near(0.6), near(1.2)], t)) ?? [], bodies([near(0.6), near(1.2)], t));
-
-  it("gives a hand to the player whose wrist it is near", () => {
-    const blueWrist = players[0]?.pose[POSE.rightWrist] ?? at(0, 0);
-    expect(owners([at(blueWrist.x + 0.02, blueWrist.y)], players, [POSE.leftWrist, POSE.rightWrist])).toEqual([0]);
-  });
-
-  it("gives no one a hand or face far from both players", () => {
-    expect(owners([at(0.9, 0.2)], players, [POSE.leftWrist, POSE.rightWrist])).toEqual([-1]);
-    expect(owners([at(0.9, 0.2)], players, [POSE.nose])).toEqual([-1]);
-  });
-
-  it("refuses a small hand near a player's wrist, from someone sitting behind them", () => {
-    const wrist = players[0]?.pose[POSE.rightWrist] ?? at(0, 0);
-    const width = players[0]?.width ?? 0;
-    const anchors = [POSE.leftWrist, POSE.rightWrist];
-    expect(owners([wrist], players, anchors, [0.5 * width])).toEqual([0]);
-    expect(owners([wrist], players, anchors, [0.1 * width])).toEqual([-1]);
-  });
-
-  it("gives a face to the player whose nose it is on", () => {
-    const orangeNose = players[1]?.pose[POSE.nose] ?? at(0, 0);
-    expect(owners([orangeNose], players, [POSE.nose])).toEqual([1]);
+describe("face ownership", () => {
+  it("uses one visible nose and rejects ambiguous or background faces", () => {
+    const player = body();
+    const nose = player.pose[POSE.nose];
+    expect(ownFace([[nose, nose]], player, t.visibility)).toBe(0);
+    expect(ownFace([[nose, nose], [nose, nose]], player, t.visibility)).toBe(-1);
+    expect(ownFace([[nose, { ...nose, x: nose.x + 1 }]], player, t.visibility)).toBe(-1);
+    const hidden = { ...player, pose: player.pose.map(point => ({ ...point, visibility: 0.1 })) };
+    expect(ownFace([[nose, nose]], hidden, t.visibility)).toBe(-1);
   });
 });

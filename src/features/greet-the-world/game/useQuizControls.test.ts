@@ -35,18 +35,19 @@ afterEach(() => {
 });
 
 describe("teacher quiz controls", () => {
-  it("routes shifted answers to Player 2", () => {
+  it("routes uppercase and shifted digit answers to the sole player", () => {
     const session = makeSession();
-    session.pickMatch(0, 1);
+    session.startTurn(0);
     const answer = vi.spyOn(session, "answer");
     const mark = vi.spyOn(session, "mark");
     render(session);
     key("T", window, { shiftKey: true });
     key("F", window, { shiftKey: true });
     for (const [value, code] of [["!", "Digit1"], ["@", "Digit2"], ["#", "Digit3"]]) key(value, window, { shiftKey: true, code });
-    expect(answer.mock.calls).toEqual([[true, 1], [false, 1], [0, 1], [1, 1], [2, 1]]);
+    expect(answer.mock.calls).toEqual([[true], [false], [0], [1], [2]]);
+    mark.mockClear();
     key("Y", window, { shiftKey: true }); key("N", window, { shiftKey: true });
-    expect(mark.mock.calls).toEqual([[true, 1], [false, 1]]);
+    expect(mark.mock.calls).toEqual([[true], [false]]);
   });
 
   it("ticks at the configured cadence and releases the old session on replacement", () => {
@@ -65,7 +66,7 @@ describe("teacher quiz controls", () => {
     expect(tickSecond).toHaveBeenCalledTimes(2);
     key("t");
     expect(firstAnswer).not.toHaveBeenCalled();
-    expect(secondAnswer).toHaveBeenCalledWith(true, 0);
+    expect(secondAnswer).toHaveBeenCalledWith(true);
     act(() => root.render(null));
     act(() => vi.advanceTimersByTime(200));
     key("t");
@@ -82,9 +83,9 @@ describe("teacher quiz controls", () => {
     const mark = vi.spyOn(session, "mark");
     render(session);
     for (const value of ["t", "f", "1", "2", "3"]) expect(key(value).defaultPrevented).toBe(true);
-    expect(answer.mock.calls).toEqual([[true, 0], [false, 0], [0, 0], [1, 0], [2, 0]]);
+    expect(answer.mock.calls).toEqual([[true], [false], [0], [1], [2]]);
     key("y"); key("n"); key("s"); key("p"); key(" ");
-    expect(mark.mock.calls).toEqual([[true, 0], [false, 0]]);
+    expect(mark.mock.calls).toEqual([[true], [false]]);
     expect(skip).toHaveBeenCalledTimes(1);
     expect(pause).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledTimes(1);

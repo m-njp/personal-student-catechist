@@ -16,25 +16,23 @@ export function useQuizControls(session: QuizSession): void {
       if (event.key === " " && target?.closest("button")) return;
       const key = event.shiftKey && /^Digit[123]$/.test(event.code) ? event.code.slice(-1) : event.key.toLowerCase();
       if (event.shiftKey && !["t", "f", "1", "2", "3", "y", "n"].includes(key)) return;
-      // Plain keys answer for Blue, the same keys with Shift for Orange.
-      const player = event.shiftKey ? 1 : 0;
       const phase = session.getSnapshot().phase;
       switch (key) {
         case "t":
-          session.answer(true, player);
+          session.answer(true);
           break;
         case "f":
-          session.answer(false, player);
+          session.answer(false);
           break;
         case "1":
         case "2":
         case "3":
-          session.answer((Number(key) - 1) as 0 | 1 | 2, player);
+          session.answer((Number(key) - 1) as 0 | 1 | 2);
           break;
         case "y":
         case "n":
           if (phase === "final" && key === "y") session.finishFinal();
-          else session.mark(key === "y", player);
+          else session.mark(key === "y");
           break;
         case "s":
           session.skip();

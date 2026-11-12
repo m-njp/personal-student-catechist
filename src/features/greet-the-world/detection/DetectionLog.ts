@@ -1,16 +1,13 @@
 import { Observable } from "@/core/Observable";
 import type { Reading } from "../content";
 
-export type PlayerColor = "blue" | "orange";
-
-/** Something the detector decided, such as finding the players or a reading turning on. */
+/** Something the detector decided, such as finding the player or a reading turning on. */
 export interface LogEvent {
   /** Counts up from 1, so each event has its own name. */
   n: number;
   /** Milliseconds since the game opened. */
   at: number;
   what: "camera" | "models" | "locked" | "lost" | "on" | "off" | "held";
-  player?: PlayerColor;
   reading?: Reading;
   /** The raw level when it happened, or a short note such as the GPU or CPU. */
   detail?: string;
@@ -20,18 +17,19 @@ export interface LogEvent {
 export interface LogFrame {
   /** Milliseconds since the game opened. */
   at: number;
-  levels: readonly (Readonly<Record<string, number>> | null)[];
+  levels: Readonly<Record<string, number>> | null;
   fps?: number;
   inferenceMs?: number;
   resultAgeMs?: number;
   delegate?: string;
   targets?: readonly Reading[];
-  raw?: readonly ({
+  lock?: "searching" | "tracking" | "recovering";
+  raw?: {
     levels: Readonly<Record<string, number>>;
     shapes: Readonly<Record<string, number>> | null;
     baseline: Readonly<Record<string, number>> | null;
     gesture: { name: string; score: number } | null;
-  } | null)[];
+  } | null;
 }
 
 /**

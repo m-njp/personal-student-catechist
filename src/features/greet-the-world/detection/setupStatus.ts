@@ -7,13 +7,13 @@ export function setupSigns(content: GreetContent): readonly Reading[] {
   return READINGS.filter((reading) => used.has(reading));
 }
 
-type SetupView = Pick<CameraView, "status" | "locked" | "players" | "passed">;
+type SetupView = Pick<CameraView, "status" | "locked" | "player" | "passed">;
 
-/** How far the setup check has come: players found, and which signs have been held. */
+/** How far the setup check has come: player found, and which signs have been held. */
 export function setupStatus(view: SetupView | null, signs: readonly Reading[]) {
   const passed = new Set(view?.passed);
   const remaining = signs.filter((reading) => !passed.has(reading));
-  const ready = Boolean(view?.status === "running" && view.locked && view.players.length > 0 && view.players.every((player) => player.found));
+  const ready = Boolean(view?.status === "running" && view.locked && view.player?.found);
   return {
     ready,
     complete: ready && remaining.length === 0,

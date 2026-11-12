@@ -2,96 +2,110 @@ import type { Thresholds } from "./config";
 import { tracking } from "./config";
 import { distance, middle, POSE, type Landmarks, type Point } from "./geometry";
 
-/** A body the camera sees well enough to play: where its shoulders are, and how wide. */
-export interface Body {
-  pose: Landmarks;
-  center: Point;
-  width: number;
-}
+export interface Spot { center: Point; width: number }
+export interface Body extends Spot { pose: Landmarks; appearance?: readonly number[] | null }
+export type Guidance = "center" | "return" | "left" | "right" | "closer" | "back" | "up" | "down" | "hold";
 
-/** Where a locked player was last seen. Blue is first, on the left of the mirrored view; Orange is second. */
-export interface Spot {
-  center: Point;
-  width: number;
-}
-
-/**
- * Bodies standing close enough to play, closest first. Wider shoulders mean closer to the camera, so pupils
- * sitting farther back, smaller than the player size, are left out here and never read.
- */
+/** Detecting several people lets us reject bystanders; only one can become the player. */
 export function bodies(poses: readonly Landmarks[], t: Thresholds): Body[] {
-  const found: Body[] = [];
-  for (const pose of poses) {
-    const left = pose[POSE.leftShoulder];
-    const right = pose[POSE.rightShoulder];
-    if (!left || !right || left.visibility < t.visibility || right.visibility < t.visibility) continue;
+  return poses.flatMap(pose => {
+    const left = pose[POSE.leftShoulder], right = pose[POSE.rightShoulder];
+    if (!left || !right || left.visibility < t.visibility || right.visibility < t.visibility) return [];
     const width = distance(left, right);
-    if (width >= t.playerSize) found.push({ pose, center: middle(left, right), width });
-  }
-  return found.sort((a, b) => b.width - a.width);
-}
-
-/**
- * The closest body, and the next closest when it stands about as near, Blue on the left. Someone far
- * behind a lone player is never locked as the second player. Null until anyone is seen.
- */
-export function lockPlayers(found: readonly Body[]): Spot[] | null {
-  const [first, second] = found;
-  if (!first) return null;
-  const near = second && second.width >= tracking.followWidth * first.width ? [first, second] : [first];
-  return near.sort((a, b) => a.center.x - b.center.x).map((body) => ({ center: body.center, width: body.width }));
-}
-
-/**
- * Which body each locked player is now, or null when they are out of sight. A body must be about as close
- * as the player was and near where they stood, so someone walking past behind never takes their place.
- * Nearest pairs are matched first, so two players never swap.
- */
-export function follow(spots: readonly Spot[], found: readonly Body[]): (Body | null)[] {
-  const pairs: { spot: number; body: number; gap: number }[] = [];
-  spots.forEach((spot, s) =>
-    found.forEach((body, b) => {
-      const gap = distance(spot.center, body.center) / spot.width;
-      if (body.width >= tracking.followWidth * spot.width && gap <= tracking.followMove) pairs.push({ spot: s, body: b, gap });
-    }),
-  );
-  pairs.sort((a, b) => a.gap - b.gap);
-  const result: (Body | null)[] = spots.map(() => null);
-  const taken = new Set<number>();
-  for (const pair of pairs) {
-    if (result[pair.spot] || taken.has(pair.body)) continue;
-    result[pair.spot] = found[pair.body];
-    taken.add(pair.body);
-  }
-  return result;
-}
-
-/**
- * Which player each point belongs to: a hand's wrist to the nearest player's wrist, or a face's nose to
- * the nearest player's nose. -1 when no player is near enough, such as a hand of someone behind them.
- * With `sizes`, a hand must also be big enough for that player, since a pupil behind has a smaller hand.
- */
-export function owners(
-  points: readonly Point[],
-  players: readonly (Body | null)[],
-  anchors: readonly number[],
-  sizes?: readonly number[],
-): number[] {
-  return points.map((point, i) => {
-    let owner = -1;
-    let best = Infinity;
-    players.forEach((player, p) => {
-      if (!player) return;
-      if (sizes && sizes[i] < tracking.handSize * player.width) return;
-      for (const anchor of anchors) {
-        if (!player.pose[anchor] || player.pose[anchor].visibility < 0.6) continue;
-        const gap = distance(point, player.pose[anchor]) / player.width;
-        if (gap <= tracking.matchNear && gap < best) {
-          best = gap;
-          owner = p;
-        }
-      }
-    });
-    return owner;
+    return width >= t.playerSize ? [{ pose, center: middle(left, right), width }] : [];
   });
+}
+
+function appearanceGap(a: readonly number[] | null | undefined, b: readonly number[] | null | undefined): number | null {
+  if (!a || !b || a.length !== b.length) return null;
+  return a.reduce((sum, value, i) => sum + Math.abs(value - b[i]), 0) / 2;
+}
+
+/** The clothes seen at acquisition stay fixed, so a recovery cannot drift from the player to a bystander. */
+export class SubjectTracker {
+  spot: Spot | null = null;
+  guidance: Guidance = "center";
+  private identity: readonly number[] | null = null;
+  private missing = false;
+  private candidate: Body | null = null;
+  private since = 0;
+
+  reset(): void {
+    this.spot = null; this.identity = null; this.missing = false; this.candidate = null; this.guidance = "center";
+  }
+
+  lose(): void {
+    this.missing = Boolean(this.spot); this.candidate = null;
+    this.guidance = this.spot ? "return" : "center";
+  }
+
+  observe(found: readonly Body[], aspect: number, now: number): Body | null {
+    if (!this.spot) {
+      const candidates = found.filter(body => Math.abs(body.center.x / aspect - 0.5) <= tracking.centerRange)
+        .map(body => ({ body, score: Math.abs(body.center.x - aspect / 2) / body.width }))
+        .sort((a, b) => a.score - b.score);
+      const best = candidates[0];
+      if (!best || (candidates[1] && candidates[1].score - best.score < tracking.subjectAmbiguity)) {
+        this.candidate = null; this.guidance = "center"; return null;
+      }
+      this.guidance = "hold";
+      if (!this.confirm(best.body, now)) return null;
+      this.spot = best.body; this.identity = best.body.appearance ?? null; this.candidate = null;
+      return best.body;
+    }
+    const spot = this.spot;
+    const candidates = found.flatMap(body => {
+      const gap = distance(spot.center, body.center) / spot.width;
+      const scale = body.width / spot.width;
+      // Frame to frame, position and size are proof enough. After a loss, only the same clothes are.
+      const appearance = this.missing ? appearanceGap(this.identity, body.appearance) : 0;
+      if (gap > tracking.followMove || scale < tracking.followWidth || scale > 1 / tracking.followWidth ||
+          appearance === null || appearance > tracking.appearanceGap) return [];
+      return [{ body, score: gap + Math.abs(Math.log(scale)) + appearance }];
+    }).sort((a, b) => a.score - b.score);
+    const best = candidates[0];
+    if (!best || (candidates[1] && candidates[1].score - best.score < tracking.subjectAmbiguity)) {
+      this.lose(); this.guide(found); return null;
+    }
+    if (this.missing) {
+      this.guidance = "hold";
+      if (!this.confirm(best.body, now)) return null;
+    }
+    this.spot = best.body; this.missing = false; this.candidate = null;
+    return best.body;
+  }
+
+  private confirm(body: Body, now: number): boolean {
+    const previous = this.candidate;
+    if (!previous || distance(previous.center, body.center) / previous.width > tracking.confirmMove ||
+        Math.abs(Math.log(body.width / previous.width)) > tracking.confirmMove) {
+      this.candidate = body; this.since = now; return false;
+    }
+    return now - this.since >= tracking.confirmMs;
+  }
+
+  private guide(found: readonly Body[]): void {
+    const spot = this.spot;
+    if (!spot) return;
+    const nearest = [...found].sort((a, b) => distance(a.center, spot.center) - distance(b.center, spot.center))[0];
+    if (!nearest) return;
+    const dx = (nearest.center.x - spot.center.x) / spot.width;
+    const dy = (nearest.center.y - spot.center.y) / spot.width;
+    this.guidance = Math.abs(dx) > 0.4 ? (dx > 0 ? "left" : "right")
+      : nearest.width < spot.width * 0.8 ? "closer" : nearest.width > spot.width * 1.25 ? "back"
+      : Math.abs(dy) > 0.4 ? (dy > 0 ? "up" : "down") : "return";
+  }
+}
+
+/** A face must uniquely match the visible player's nose. */
+export function ownFace(faces: readonly Landmarks[], body: Body, visibility: number): number {
+  const nose = body.pose[POSE.nose];
+  if (!nose || nose.visibility < visibility) return -1;
+  const candidates = faces.flatMap((face, index) => {
+    const point = face[1];
+    const gap = point ? distance(point, nose) / body.width : Infinity;
+    return gap <= tracking.faceNear ? [{ index, gap }] : [];
+  }).sort((a, b) => a.gap - b.gap);
+  if (!candidates[0] || (candidates[1] && candidates[1].gap - candidates[0].gap < tracking.subjectAmbiguity)) return -1;
+  return candidates[0].index;
 }

@@ -1,3 +1,5 @@
+import type { Guidance } from "./detection/players";
+import type { ProcessingMode } from "./detection/protocol";
 import type { Tunable } from "./detection/config";
 
 /** Every reading the camera makes, in the order the setup check lists them. */
@@ -77,15 +79,19 @@ export interface GreetContent {
     continue: string;
   };
   menu: { back: string };
-  ui: { live: string; continue: string; searching: string; hands: string; holding: string; accepted: string; diagnostics: string; manual: string };
+  ui: { live: string; continue: string; hands: string; holding: string; accepted: string; diagnostics: string; manual: string };
   loading: { title: string; steps: readonly [string, string, string]; failed: string };
-  /** Player 1 stands on the left of the mirrored camera, Player 2 on the right. */
-  players: readonly [string, string];
-  camera: Readonly<Record<"blocked" | "busy" | "missing" | "failed", string>> & { retry: string; waiting: string };
+  player: string;
+  camera: Readonly<Record<"blocked" | "busy" | "missing" | "failed", string>> & {
+    retry: string;
+    waiting: string;
+    guide: Readonly<Record<Guidance, string>>;
+    processing: Readonly<Record<ProcessingMode, { label: string; hint: string }>>;
+  };
   setup: {
     title: string;
     complete: string;
-    /** "{player} is ready" and "{player}: step closer". */
+    /** "{player} is ready" and "{player}: follow the outline". */
     found: string;
     missing: string;
     pick: string;
@@ -105,10 +111,7 @@ export interface GreetContent {
   };
   quiz: {
     match: string;
-    /** The two sides of a match, as the players stand. */
-    sides: readonly [string, string];
-    /** The button that starts a match: "Start {blue} vs {orange}". */
-    versus: string;
+    start: string;
     played: string;
     ready: string;
     /** "Question {n} of {all}". */
@@ -132,13 +135,12 @@ export interface GreetContent {
     /** The teacher's button for a pose: "{group} did it". */
     markDone: string;
     keys: string;
-    matchEnd: string;
+    turnEnd: string;
     scoreboardBack: string;
     final: string;
     finalTask: string;
     finalScores: string;
     question: string;
-    player: string;
     rawLegend: string;
     rawColumns: string;
     closeDetails: string;
