@@ -31,8 +31,8 @@ export function StageBanner({ session, content }: { session: BayanSession; conte
         role="status"
         className="animate-rise-in rounded-2xl border-2 border-ink bg-gold px-8 py-5 text-center shadow-game"
       >
-        <span className="block text-game-small uppercase tracking-label">Stage {stage} complete</span>
-        <span className="pixel block text-game-title lowercase">{content.stages[stage - 1].title}</span>
+        <span className="block text-game-small tracking-label">Stage {stage} complete</span>
+        <span className="pixel block text-game-title">{content.stages[stage - 1].title}</span>
       </p>
     </div>
   );

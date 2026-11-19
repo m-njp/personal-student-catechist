@@ -25,7 +25,7 @@ export function LessonCard({ label, theme, cover, children }: LessonCardProps) {
           />
         )}
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-label text-muted">Lesson {label}, big idea</p>
+          <p className="text-xs tracking-label text-muted">Lesson {label}, big idea</p>
           <p className="mt-1.5 font-serif text-lg leading-snug">{theme}</p>
         </div>
       </div>

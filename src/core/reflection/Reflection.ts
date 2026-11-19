@@ -16,7 +16,7 @@ export interface NewReflection {
 
 export const REFLECTION_LIMITS = {
   nameMax: 60,
-  contentMax: 2000,
+  contentMax: 255,
 } as const;
 
 /** Trims the input and checks it. Throws with a short, readable message. */

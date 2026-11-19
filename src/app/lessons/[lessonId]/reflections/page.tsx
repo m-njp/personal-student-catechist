@@ -23,9 +23,10 @@ export default async function ReflectionsPage({ params }: ReflectionsPageProps) 
   return (
     <Screen lessonId={lesson.id}>
       <div className="w-full max-w-page px-4 py-8 lg:px-10 lg:py-12">
-        <PageHeading eyebrow={`Lesson ${lesson.label}`} title="reflections" intro={lesson.reflectionPrompt} />
+        <PageHeading eyebrow={`Lesson ${lesson.label}`} title="Reflections" intro={lesson.reflectionPrompt} />
         <ReflectionCards
           lessonId={lesson.id}
+          canWrite={lesson.canWriteReflection}
           aside={<LessonCard label={lesson.label} theme={lesson.theme} cover={lesson.cover} />}
         />
       </div>

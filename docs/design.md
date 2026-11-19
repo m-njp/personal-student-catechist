@@ -28,8 +28,8 @@ Each lesson's game has its own fonts, buttons, and motion, chosen for its story,
 
 ## Rules
 
-- No gradients. No divider lines: use space and card borders. The lesson list's tree lines are the one exception.
-- No middots, em dashes, or emoji. Headings on the site's own pages are lowercase; a game from Lesson 04 on uses the capitalization its content is written in.
+- No gradients or decorative accent bars. Use full fills for selected states. No divider lines: use space and card borders. The lesson list's tree lines are the one exception.
+- No middots, em dashes, or emoji. Use sentence case for headings, labels, buttons, dropdowns, questions, and dialogue. Capitalize sentence openings, names, and religious proper nouns correctly. Game titles retain their proper title capitalization. Write the correct case in content; never force lowercase, uppercase, or capitalize with CSS.
 - Tap targets are at least 44px.
 - Cards are `rounded-2xl border border-hairline` with generous padding.
 - Mobile first: every screen works at 375px, then grows for laptop (`lg`) and TV.
@@ -37,7 +37,8 @@ Each lesson's game has its own fonts, buttons, and motion, chosen for its story,
 ## Layout
 
 - Laptop and TV: a slim lesson list on the left, content on the right. On the activity, the wall fills the height and the controls sit in a narrow column beside it.
-- Phone: a top bar whose menu opens a small card under the button, never the whole screen.
+- Lesson titles are links, with no separate expand control. Only the current lesson shows its pages. A tree stem connects its number to the page branches, and a full fill marks the current page.
+- Phone: a top bar whose menu opens a small card under a chevron button, never the whole screen. Keep it within the viewport. Escape and outside taps close it; opening moves focus into the card and Escape returns it to the button.
 - Full screen (the TV): the wall is centered and the controls float in a small card that folds away. Where the browser has no Fullscreen API, the activity covers the window.
 - The activity screen never scrolls. Other pages do.
 

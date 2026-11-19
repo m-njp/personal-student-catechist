@@ -44,7 +44,7 @@ export function ServeBoard({ session, content, entries, sheet }: BoardProps) {
         className="flex min-h-11 w-full items-center justify-between gap-2 text-left"
       >
         <span>
-          <span className="pixel block text-game lowercase">our promises</span>
+          <span className="pixel block text-game">Our promises</span>
           <span className="block text-game-small text-muted">
             {written} of {LOT_IDS.length} groups
           </span>
@@ -61,7 +61,7 @@ export function ServeBoard({ session, content, entries, sheet }: BoardProps) {
               <li key={lot} className="flex items-center gap-2">
                 <div aria-hidden className="building-art building-thumb shrink-0" style={art} />
                 <p className="min-w-0 text-game-small">
-                  <span className="pixel block lowercase text-muted">{group}</span>
+                  <span className="pixel block text-muted">{group}</span>
                   <span className={entry ? "font-medium" : "italic text-muted"}>{entry ? entry.content : `${starter}...`}</span>
                 </p>
               </li>

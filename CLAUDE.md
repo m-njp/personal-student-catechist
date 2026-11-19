@@ -45,7 +45,7 @@ npm run check      # all of the above, in order
 - Mobile first. Check every change at 375px wide and at laptop width.
 - Tap targets are at least 44px.
 - No gradients, divider lines, middots, em dashes, or emoji, in UI text or docs.
-- Headings on the site's own pages are lowercase. Games from Lesson 04 on use the capitalization their content is written in, and each game has its own fonts, buttons, and motion. Instructions fit in one or two lines.
+- Use proper capitalization throughout the UI, including headings, dropdowns, questions, and dialogue. Use sentence case, preserve proper names and game titles, and never force case with CSS. No decorative accent bars. Each game has its own fonts, buttons, and motion. Instructions fit in one or two lines.
 
 ## Git
 

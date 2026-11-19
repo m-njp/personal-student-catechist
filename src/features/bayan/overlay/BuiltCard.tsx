@@ -37,11 +37,11 @@ export function BuiltCard({ session, content, sheet }: BuiltCardProps) {
         aria-label={`Our ${building} is built`}
         className={`flex w-full max-w-dialog animate-pop-in flex-col items-center gap-game-gap text-center ${panel}`}
       >
-        <p className="pixel rounded-full border-2 border-ink bg-leaf px-5 py-1 text-game-small lowercase text-paper">built</p>
-        <h2 className="pixel text-game-title lowercase">our {building} is built!</h2>
+        <p className="pixel rounded-full border-2 border-ink bg-leaf px-5 py-1 text-game-small text-paper">Built</p>
+        <h2 className="pixel text-game-title">Our {building} is built!</h2>
         <div aria-hidden className="building-art animate-rise-in" style={art} />
         <p className="text-game">
-          <span className="block text-game-small uppercase tracking-label text-muted">Led by</span>
+          <span className="block text-game-small tracking-label text-muted">Led by</span>
           <span className="font-semibold">{leaders}</span>
         </p>
         {progress.stage === 1 && (
