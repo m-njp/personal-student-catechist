@@ -49,5 +49,14 @@ export function reflectionRepositoryContract(create: (now: () => Date) => Reflec
       await expect(repo.save({ lessonId: "lesson-01", pupilName: "A", content: "  " })).rejects.toThrow();
       expect(await repo.listByLesson("lesson-01")).toEqual([]);
     });
+
+    it("saves 255 characters and refuses 256 without saving the entry", async () => {
+      const repo = create(steppingClock());
+      const content = "A".repeat(255);
+      const saved = await repo.save({ lessonId: "lesson-01", pupilName: "Ana", content });
+      expect(saved.content).toBe(content);
+      await expect(repo.save({ lessonId: "lesson-01", pupilName: "Ana", content: `${content}B` })).rejects.toThrow("Your reflection is too long.");
+      expect(await repo.listByLesson("lesson-01")).toHaveLength(1);
+    });
   });
 }

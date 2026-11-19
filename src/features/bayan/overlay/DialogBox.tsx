@@ -122,7 +122,7 @@ function Conversation({ session, content, dialog, peopleSheet, peopleRows }: Dia
         className="pointer-events-auto relative flex w-full max-w-dialog animate-pop-in flex-col items-start outline-none"
       >
         {/* The name plate, big enough to read from the back of the room. */}
-        <p className="pixel rounded-t-xl border-3 border-b-0 border-ink bg-ink px-5 pb-1 pt-1.5 text-game-name lowercase text-paper">
+        <p className="pixel rounded-t-xl border-3 border-b-0 border-ink bg-ink px-5 pb-1 pt-1.5 text-game-name text-paper">
           {name}
         </p>
         <div className="flex w-full flex-col gap-game-gap rounded-2xl rounded-tl-none border-3 border-ink bg-paper p-game-gap shadow-game">
@@ -184,7 +184,7 @@ function Conversation({ session, content, dialog, peopleSheet, peopleRows }: Dia
                     Try again
                   </span>
                   <p className="text-game-small font-medium text-ink">
-                    <span className="pixel lowercase">{content.people[hint.speaker]?.name ?? hint.speaker}: </span>
+                    <span className="pixel">{content.people[hint.speaker]?.name ?? hint.speaker}: </span>
                     {hint.text}
                   </p>
                 </div>
@@ -248,7 +248,7 @@ function StoryCard({ session, card, art, last }: { session: BayanSession; card: 
       >
         {art && <div aria-hidden className="statue-art shrink-0" style={{ backgroundImage: `url(${art})` }} />}
         <div className="flex min-w-0 flex-1 flex-col gap-game-gap">
-          <h2 className="pixel text-game-title lowercase">{card.title}</h2>
+          <h2 className="pixel text-game-title">{card.title}</h2>
           <p className={`text-game ${todo ? "italic text-muted" : "font-medium"}`}>{todo ? "To be added by the teacher." : card.body}</p>
           <div className="flex justify-end">
             <button type="button" autoFocus onClick={() => director.next()} className={actionButton}>
@@ -283,10 +283,10 @@ function FigureCard({ session, content, peopleSheet, peopleRows, index, last }: 
           <Portrait sheet={peopleSheet} rows={peopleRows} sprite={figure.sprite} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <p className="text-game-small uppercase tracking-label text-muted">
+          <p className="text-game-small tracking-label text-muted">
             {index + 1} of {content.figures.length}
           </p>
-          <h2 className="pixel text-game-title lowercase">{figure.title}</h2>
+          <h2 className="pixel text-game-title">{figure.title}</h2>
           {name && <p className="text-game font-semibold">{name}</p>}
           <p className="text-game font-medium">{figure.role}</p>
           <div className="flex justify-end">

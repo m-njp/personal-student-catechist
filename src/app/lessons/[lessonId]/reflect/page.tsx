@@ -13,19 +13,19 @@ interface ReflectPageProps {
 export const metadata: Metadata = { title: "Write a reflection" };
 
 export function generateStaticParams() {
-  return lessons.map((lesson) => ({ lessonId: lesson.id }));
+  return lessons.filter((lesson) => lesson.canWriteReflection).map((lesson) => ({ lessonId: lesson.id }));
 }
 
 export default async function ReflectPage({ params }: ReflectPageProps) {
   const lesson = getLesson((await params).lessonId);
-  if (!lesson) notFound();
+  if (!lesson || !lesson.canWriteReflection) notFound();
 
   return (
     <Screen lessonId={lesson.id}>
       <div className="w-full max-w-page px-4 py-8 lg:px-10 lg:py-12">
         <PageHeading
           eyebrow={`Lesson ${lesson.label}`}
-          title="write a reflection"
+          title="Write a reflection"
           intro="Think about today. Then write in your own words."
         />
         {/* Card first in the markup so it sits on top on phones; it moves to the right on wide screens. */}

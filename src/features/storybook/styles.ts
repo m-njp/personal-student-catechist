@@ -13,4 +13,4 @@ export const cornerButton =
 
 /** A row in the teacher panel, and the small heading over a group of rows. */
 export const panelRow = "flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-left text-sm hover:bg-wash";
-export const panelLabel = "px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted";
+export const panelLabel = "px-3 pb-1 pt-2 text-xs tracking-label text-muted";

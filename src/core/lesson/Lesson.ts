@@ -21,6 +21,8 @@ export interface LessonInit {
   activities: readonly Activity[];
   /** Question pupils answer in their reflection. */
   reflectionPrompt: string;
+  /** Disable the writing page for lessons that only use their game. */
+  canWriteReflection?: boolean;
   /** Short openings a pupil can tap to start writing. */
   reflectionStarters?: readonly string[];
   /** Picture shown beside the reflection pages. */
@@ -34,6 +36,7 @@ export interface LessonSummary {
   number: number;
   label: string;
   title: string;
+  canWriteReflection: boolean;
 }
 
 /** A lesson: its details and the activities in the order they run. */
@@ -44,6 +47,7 @@ export class Lesson {
   readonly theme: string;
   readonly activities: readonly Activity[];
   readonly reflectionPrompt: string;
+  readonly canWriteReflection: boolean;
   readonly reflectionStarters: readonly string[];
   readonly cover?: LessonPicture;
   readonly songs: readonly SongReference[];
@@ -58,6 +62,7 @@ export class Lesson {
     this.theme = init.theme;
     this.activities = init.activities;
     this.reflectionPrompt = init.reflectionPrompt;
+    this.canWriteReflection = init.canWriteReflection ?? true;
     this.reflectionStarters = init.reflectionStarters ?? [];
     this.cover = init.cover;
     this.songs = init.songs ?? [];
@@ -69,6 +74,6 @@ export class Lesson {
   }
 
   toSummary(): LessonSummary {
-    return { id: this.id, number: this.number, label: this.label, title: this.title };
+    return { id: this.id, number: this.number, label: this.label, title: this.title, canWriteReflection: this.canWriteReflection };
   }
 }

@@ -31,7 +31,7 @@ export function StartScreen({ title, tagline, play, art, children, onPlay }: Sta
       </motion.div>
       <div className="relative flex flex-wrap items-end justify-center gap-story-gap">{children}</div>
       <motion.h2
-        className="relative font-story text-story-hero font-extrabold lowercase leading-none"
+        className="relative font-story text-story-hero font-extrabold leading-none"
         initial={{ opacity: 0, y: "0.4em", rotate: -3 }}
         animate={{ opacity: 1, y: 0, rotate: -1.5 }}
         transition={{ type: "spring", stiffness: 180, damping: 14 }}

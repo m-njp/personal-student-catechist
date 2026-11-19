@@ -31,7 +31,7 @@ export function StartScreen({ session, content, fullscreen }: StartScreenProps) 
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-ink/30 p-game-gap">
       <section className="flex w-full max-w-dialog animate-pop-in flex-col items-start gap-game-gap rounded-2xl border-2 border-ink bg-paper p-game-gap shadow-game">
-        <h2 className="pixel text-game-title lowercase">{content.title.title}</h2>
+        <h2 className="pixel text-game-title">{content.title.title}</h2>
         <p className="text-game">{content.title.body}</p>
         <p className="text-game-small text-muted">
           <ControlsText />

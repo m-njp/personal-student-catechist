@@ -14,55 +14,55 @@ const wrong = (text: string, speaker: string, hint: string): Choice => ({ text, 
 export const bayan: BayanContent = {
   stages: [
     {
-      title: "icebreaker",
+      title: "Icebreaker",
       instructions: "Find the leader of each community. Look for the question marks.",
       start: [],
       end: {
-        title: "every community has leaders",
+        title: "Every community has leaders",
         body: "Our home, our school, and our country each have leaders who guide us and help us grow. Our parish has a leader too.",
       },
     },
     {
-      title: "sacred scripture",
+      title: "Sacred scripture",
       instructions: "Talk to Father by the church. Read the verse, then find each part of the church.",
       start: ["Our town is complete. Let us look closer at our church.", "Father will read us a verse about God's household. Go talk to him!"],
       end: {
-        title: "built on christ",
+        title: "Built on Christ",
         body: "The apostles and prophets are the foundation. All of us are the walls. Christ Jesus is the capstone who holds the whole Church together.",
       },
     },
     {
-      title: "church teaching",
+      title: "Church teaching",
       instructions: "Visit St. Peter by the door, then meet each leader inside.",
       start: ["Our church is complete, and Father opened its doors!", "Go inside and meet the leaders who guide the whole Church."],
       end: {
-        title: "the leaders of the church",
+        title: "The leaders of the Church",
         body: "Jesus still guides His Church through the Pope, the bishops, our priests, and our deacons. Every baptized person, like you, has a part to play.",
       },
     },
     {
-      title: "truths to remember",
+      title: "Truths to remember",
       instructions: "Open the plaques by the monument, one at a time.",
       start: ["Three plaques stand by the monument in the park.", "Open them one at a time, starting with the first one on the left."],
       end: {
-        title: "truths to remember",
+        title: "Truths to remember",
         body: "Jesus chose the leaders of His Church. We all share in its mission. We pray for everyone who leads us.",
       },
     },
     {
-      title: "serve our town",
+      title: "Serve our town",
       instructions: "Each group finishes its sentence for its building.",
       start: ["Now it's our turn to serve our bayan.", "Each group, finish your sentence for your building's banner."],
     },
   ],
 
   title: {
-    title: "build our bayan",
+    title: "Build Our Bayan",
     body: "Find each leader of the community and together, we will build our town.",
   },
 
   recall: {
-    title: "last time",
+    title: "Last time",
     body: "Last time, we became one community and built a wall. Today, our community builds its whole town.",
   },
 
@@ -101,8 +101,8 @@ export const bayan: BayanContent = {
     "mang-ben": { name: "Mang Ben", sprite: "vendor" },
     bantay: { name: "Bantay", sprite: "dog" },
     muning: { name: "Muning", sprite: "cat" },
-    "hen-1": { name: "the hen", sprite: "chicken" },
-    "hen-2": { name: "the hen", sprite: "chicken" },
+    "hen-1": { name: "The hen", sprite: "chicken" },
+    "hen-2": { name: "The hen", sprite: "chicken" },
   },
 
   lots: {
@@ -389,20 +389,20 @@ export const bayan: BayanContent = {
   ],
 
   closeUp: {
-    title: "look closer",
+    title: "Look closer",
     body: "Our church has a foundation, walls, and a capstone. Answer Father's questions to light up each part.",
   },
   churchParts: [
-    { title: "foundation", who: "the apostles and prophets", body: "The foundation is the apostles and prophets." },
-    { title: "walls", who: "us, the household of God", body: "The walls are us, the members of the household of God." },
-    { title: "capstone", who: "Christ Jesus", body: "The capstone is Christ Jesus. Through Him, the whole structure is held together." },
+    { title: "Foundation", who: "The apostles and prophets", body: "The foundation is the apostles and prophets." },
+    { title: "Walls", who: "Us, the household of God", body: "The walls are us, the members of the household of God." },
+    { title: "Capstone", who: "Christ Jesus", body: "The capstone is Christ Jesus. Through Him, the whole structure is held together." },
   ],
   heldTogether: {
-    title: "held together",
+    title: "Held together",
     body: "The Church is more than the building we go to. We are being built together into the Church.",
   },
 
-  peter: { title: "saint peter", body: "Jesus appointed Peter as the head of the first Christian community." },
+  peter: { title: "Saint Peter", body: "Jesus appointed Peter as the head of the first Christian community." },
 
   // Role sentences are drafts for the teacher to check against CFC 1409-1410.
   figures: [
@@ -437,22 +437,22 @@ export const bayan: BayanContent = {
   // Drafts of the Truths to Remember, for the teacher to check.
   plaques: [
     {
-      title: "who chose the leaders of the church",
+      title: "Who chose the leaders of the Church",
       body: "Jesus chose the apostles and made Peter their head. Today the Pope and the bishops, who follow after them, lead the Church in His name.",
     },
     {
-      title: "how we share in its mission",
+      title: "How we share in its mission",
       body: "Priests, deacons, religious, and lay people all serve the Church. By our Baptism, each of us shares in its mission at home, in school, and in our town.",
     },
     {
-      title: "for whom we pray",
+      title: "For whom we pray",
       body: "We pray for the Pope, our bishop, our parish priest, and everyone who leads us at home, in school, and in our country.",
     },
   ],
   plaqueWait: "Read the plaques in order. Start with the first one, on the left.",
 
   prayer: {
-    title: "closing prayer",
+    title: "Closing prayer",
     body: "Lord Jesus Christ, keep our Church leaders in Your holy heart. Let them grow in love and service to all. Teach them to be Your faithful servants.",
   },
 };
