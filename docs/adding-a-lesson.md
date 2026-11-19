@@ -12,6 +12,7 @@ The menu shows the new lesson, and the home address opens the newest one.
 ## Tips
 
 - `id` must match the folder name. It becomes the address, `/lessons/lesson-02`.
+- Set `canWriteReflection: false` when a lesson has no writing activity. This hides writing links and disables its writing page; existing reflections remain readable.
 - Photo `width` and `height` must be the real pixel size. On Windows: right click, Properties, Details.
 - Run the site before choosing an `order` for Build Our Wall. Spots are numbered left to right, top to bottom, and a different `layoutSeed` or photo size changes the layout. If a pattern gives something away too early, try another `layoutSeed`.
 

@@ -7,12 +7,13 @@ import { useReflections } from "./useReflections";
 
 interface ReflectionCardsProps {
   lessonId: string;
+  canWrite: boolean;
   /** Shown beside the cards on wide screens, with the live count under it. */
   aside: ReactNode;
 }
 
 /** The teacher's view: every entry for the lesson as quiet quote cards, newest first. No names shown. */
-export function ReflectionCards({ lessonId, aside }: ReflectionCardsProps) {
+export function ReflectionCards({ lessonId, canWrite, aside }: ReflectionCardsProps) {
   const { entries, error, remove } = useReflections(lessonId, { list: true });
   const count = entries?.length ?? 0;
 
@@ -28,12 +29,12 @@ export function ReflectionCards({ lessonId, aside }: ReflectionCardsProps) {
           &ldquo;
         </span>
         <p className="text-muted">No reflections yet.</p>
-        <Link
+        {canWrite && <Link
           href={`/lessons/${lessonId}/reflect`}
           className="inline-flex min-h-11 items-center rounded-full bg-ink px-4 text-sm font-medium text-paper hover:bg-ink/85"
         >
           Write the first one
-        </Link>
+        </Link>}
       </div>
     );
   } else {

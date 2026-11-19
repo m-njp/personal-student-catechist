@@ -8,6 +8,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: site.name,
   description: `Classroom lessons for ${site.grade} ${site.name}.`,
+  icons: { icon: { url: "/logo.svg", type: "image/svg+xml" } },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

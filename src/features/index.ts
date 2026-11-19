@@ -5,3 +5,4 @@ import "./bayan/register";
 import "./bayanihan/register";
 import "./gifts/register";
 import "./greet-the-world/register";
+import "./journey/register";

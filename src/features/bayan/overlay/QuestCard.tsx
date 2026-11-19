@@ -37,10 +37,10 @@ export function QuestCard({ session, content }: { session: BayanSession; content
         className="flex min-h-11 w-full items-start justify-between gap-2 text-left"
       >
         <span className="min-w-0">
-          <span className="block text-game-small uppercase tracking-label text-muted">
+          <span className="block text-game-small tracking-label text-muted">
             Stage {progress.stage} of {content.stages.length}
           </span>
-          <span className="pixel block text-game lowercase">{stage.title}</span>
+          <span className="pixel block text-game">{stage.title}</span>
         </span>
         {open ? <ChevronUp aria-hidden className="mt-1 size-5 shrink-0" /> : <ChevronDown aria-hidden className="mt-1 size-5 shrink-0" />}
       </button>

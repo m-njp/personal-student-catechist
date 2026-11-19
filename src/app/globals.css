@@ -121,10 +121,86 @@
   --color-greet-pink: #dce965;
   --shadow-greet-card: 3px 3px 0 var(--color-greet-night);
 
+  /* A Journey to Remember: a night blue panel, cream words, and gold for the answer. Sized from the game area. */
+  --color-journey-night: #241c38;
+  --color-journey-panel: #33284d;
+  --color-journey-cream: #fff6de;
+  --color-journey-muted: #cfc4e2;
+  --color-journey-gold: #f8cf58;
+  --text-journey: max(1.25rem, 5cqmin);
+  --text-journey--line-height: 1.2;
+  --text-journey-answer: max(1.25rem, 5cqmin);
+  --text-journey-answer--line-height: 1.2;
+  --text-journey-small: max(0.9375rem, 2.6cqmin);
+  --text-journey-small--line-height: 1.3;
+  --text-journey-title: max(2.25rem, 10cqmin);
+  --text-journey-title--line-height: 1;
+  --spacing-journey-portrait: max(4.5rem, 17cqmin);
+  --spacing-journey-gap: max(0.5rem, 1.8cqmin);
+  /* Big enough to hit while standing beside the TV. */
+  --spacing-journey-button: max(2.75rem, 7cqmin);
+  --spacing-journey-border: 0.25rem;
+  --container-journey-dialog: 64rem;
+  --shadow-journey: 0.3rem 0.3rem 0 color-mix(in srgb, var(--color-journey-night) 60%, transparent);
+  --animate-journey-pop: journey-pop 380ms var(--ease-soft) both;
+  --animate-journey-reveal: journey-reveal 700ms var(--ease-soft) both;
+  --animate-journey-slide: journey-slide 520ms var(--ease-soft) both;
+  --animate-journey-breathe: journey-breathe 1.8s ease-in-out infinite;
+
+  /* A card arrives with a small hop. */
+  @keyframes journey-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-0.75rem) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* The answer is stamped in, overshooting a little. */
+  @keyframes journey-reveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.6) rotate(-3deg);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.06) rotate(1deg);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  /* The memory name slides in from the side. */
+  @keyframes journey-slide {
+    from {
+      opacity: 0;
+      transform: translateX(-1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* The Start and Reveal buttons breathe so the presenter finds them. */
+  @keyframes journey-breathe {
+    50% {
+      transform: scale(1.04);
+    }
+  }
+
   --tracking-label: 0.14em;
 
   /* Shared page layout. */
   --spacing-sidebar: 16rem;
+  --spacing-lesson-menu: min(24rem, calc(100dvh - 6rem));
+  --container-lesson-menu: calc(100vw - 2rem);
+  --spacing-lesson-tree-start: 2.25rem;
+  --spacing-lesson-tree-end: 1.375rem;
   --spacing-aside: 20rem;
   --container-page: 96rem;
   --spacing-panel: clamp(17rem, 24vw, 24rem);
@@ -231,6 +307,7 @@
   --font-greet: var(--nf-geist), system-ui, sans-serif;
   --font-greet-body: var(--nf-geist), system-ui, sans-serif;
   --font-greet-sign: var(--nf-geist-mono), ui-monospace, monospace;
+  --font-journey: var(--nf-pixelify), ui-monospace, monospace;
 }
 
 /* Tokens used from component styles rather than as classes. */
@@ -239,6 +316,16 @@
   --reveal-delay: 500ms;
   --reveal-duration: 4000ms;
   --question-delay: 3700ms;
+  /* A Journey to Remember's canvas: the greeting bubbles and the numbers on the road signs. */
+  --journey-bubble: #fff6de;
+  --journey-bubble-ink: #241c38;
+  --journey-sign-ink: #4e3428;
+  /* A flash as a memory begins, a warm one at the Church. */
+  --journey-flash: #fff6de;
+  --journey-warm: #ffd98a;
+  /* Text on the canvas, in game pixels: the game is drawn for a screen 270 pixels tall. */
+  --journey-bubble-size: 9;
+  --journey-sign-size: 13;
   /* Build Our Bayan: smallest a map tile may look, in CSS pixels, before the camera follows the pupil. */
   --game-min-tile: 24;
   /* Milliseconds per letter as a line is spoken, and the pause after a right answer. */
@@ -351,6 +438,32 @@
   --paper-grain: color-mix(in srgb, var(--color-ink) 9%, transparent);
   /* Cut paper's soft shadow, for static layers only. */
   --paper-shadow: color-mix(in srgb, var(--color-ink) 30%, transparent);
+}
+
+.lesson-nav-item,
+.lesson-nav-branch {
+  position: relative;
+}
+
+/* The stem begins below the lesson number and ends at the last page's center. */
+.lesson-nav-current::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: var(--spacing-lesson-tree-start);
+  bottom: var(--spacing-lesson-tree-end);
+  width: 1px;
+  background: color-mix(in srgb, var(--color-ink) 20%, transparent);
+}
+
+.lesson-nav-branch::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.25rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-ink) 20%, transparent);
 }
 
 /* A finished building from the buildings sheet, one cell per lot. Set --cell to its index and --cells to the count. */
@@ -672,3 +785,46 @@ body {
 
 .greet-camera-reset { position: absolute; z-index: 1; top: var(--greet-gap); right: var(--greet-gap); display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.4rem 0.7rem; background: var(--color-greet-sheet); color: var(--color-greet-night); border: var(--greet-stroke) solid var(--color-greet-night); font: var(--greet-label)/1.3 var(--font-greet-sign); }
 .greet-camera-reset:hover { background: var(--color-greet-pink); }
+
+/* A Journey to Remember (Lesson 05). Square pixel frames: a cream border with a hard shadow, never rounded. */
+.journey-shell { position: absolute; inset: 0; overflow: hidden; container-type: size; background: var(--color-journey-night); color: var(--color-journey-cream); font-family: var(--font-journey); user-select: none; }
+.journey-canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; image-rendering: pixelated; }
+.journey-icon { width: 55%; height: 55%; }
+.journey-start-card, .journey-dialogue, .journey-paused-card, .journey-banner { background: var(--color-journey-night); border: var(--spacing-journey-border) solid var(--color-journey-cream); box-shadow: var(--shadow-journey); }
+.journey-button { display: inline-flex; align-items: center; justify-content: center; min-height: var(--spacing-journey-button); padding: 0.4em 1em; background: var(--color-journey-gold); color: var(--color-journey-night); border: var(--spacing-journey-border) solid var(--color-journey-night); box-shadow: var(--shadow-journey); font: 600 var(--text-journey-small)/1.2 var(--font-journey); cursor: pointer; animation: var(--animate-journey-breathe); }
+.journey-button:hover { background: var(--color-journey-cream); }
+.journey-button:focus-visible, .journey-control:focus-visible, .journey-stop:focus-visible { outline: var(--spacing-journey-border) solid var(--color-journey-gold); outline-offset: 0.15rem; }
+.journey-button-big { font-size: var(--text-journey); padding: 0.45em 1.2em; }
+
+.journey-start { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: var(--spacing-journey-gap); background: color-mix(in srgb, var(--color-journey-night) 35%, transparent); }
+.journey-start-card { display: flex; max-width: min(92cqw, var(--container-journey-dialog)); flex-direction: column; align-items: center; gap: var(--spacing-journey-gap); padding: calc(var(--spacing-journey-gap) * 2); text-align: center; animation: var(--animate-journey-pop); }
+.journey-title { font-size: var(--text-journey-title); line-height: 1; font-weight: 700; color: var(--color-journey-gold); }
+.journey-title-small { font-size: var(--text-journey); font-weight: 700; color: var(--color-journey-gold); }
+.journey-tagline { font-size: var(--text-journey-small); line-height: 1.3; }
+
+.journey-controls { position: absolute; top: var(--spacing-journey-gap); right: var(--spacing-journey-gap); z-index: 2; display: flex; gap: 0.4rem; }
+.journey-control, .journey-stop { display: inline-flex; align-items: center; justify-content: center; width: var(--spacing-journey-button); height: var(--spacing-journey-button); background: color-mix(in srgb, var(--color-journey-night) 82%, transparent); color: var(--color-journey-cream); border: var(--spacing-journey-border) solid var(--color-journey-cream); box-shadow: var(--shadow-journey); cursor: pointer; }
+.journey-control:hover, .journey-stop:hover { background: var(--color-journey-panel); }
+.journey-roadmap { position: absolute; bottom: var(--spacing-journey-gap); left: var(--spacing-journey-gap); z-index: 2; display: flex; gap: 0.4rem; }
+.journey-stop { font: 700 var(--text-journey-small)/1 var(--font-journey); }
+.journey-stop[data-state=done] { background: var(--color-journey-panel); color: var(--color-journey-gold); }
+.journey-stop[data-state=here] { background: var(--color-journey-gold); color: var(--color-journey-night); }
+
+.journey-banner { position: absolute; top: var(--spacing-journey-gap); left: var(--spacing-journey-gap); display: flex; flex-direction: column; gap: 0.15em; padding: 0.4em 0.8em; animation: var(--animate-journey-slide); }
+.journey-banner-lesson { color: var(--color-journey-muted); font-size: var(--text-journey-small); }
+.journey-banner-game { color: var(--color-journey-gold); font-size: var(--text-journey); font-weight: 700; }
+
+.journey-dialogue { position: absolute; top: var(--spacing-journey-gap); left: var(--spacing-journey-gap); right: calc(var(--spacing-journey-button) * 4 + 1.2rem + var(--spacing-journey-gap) * 2); display: flex; max-width: var(--container-journey-dialog); margin-inline: auto; gap: var(--spacing-journey-gap); align-items: flex-start; padding: var(--spacing-journey-gap); animation: var(--animate-journey-pop); }
+/* On a narrow screen the question sits under the corner buttons, full width. */
+@container (max-width: 44rem) { .journey-dialogue { top: calc(var(--spacing-journey-button) + var(--spacing-journey-gap) * 2); right: var(--spacing-journey-gap); } }
+.journey-dialogue-text { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: calc(var(--spacing-journey-gap) * 0.6); }
+.journey-portrait { flex-shrink: 0; width: var(--spacing-journey-portrait); height: var(--spacing-journey-portrait); background-color: var(--color-journey-panel); background-repeat: no-repeat; background-size: calc(var(--spacing-journey-portrait) * var(--sheet-w) / var(--crop)) calc(var(--spacing-journey-portrait) * var(--sheet-h) / var(--crop)); background-position: calc(var(--spacing-journey-portrait) * var(--crop-x) / var(--crop) * -1) calc(var(--spacing-journey-portrait) * var(--crop-y) / var(--crop) * -1); border: var(--spacing-journey-border) solid var(--color-journey-cream); image-rendering: pixelated; }
+.journey-speaker { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6em; color: var(--color-journey-gold); font-size: var(--text-journey-small); font-weight: 700; }
+.journey-speaker-lesson { color: var(--color-journey-muted); font-weight: 400; }
+.journey-question { font-size: var(--text-journey); line-height: 1.2; font-weight: 600; }
+.journey-answer { align-self: flex-start; padding: 0.25em 0.6em; background: var(--color-journey-gold); color: var(--color-journey-night); font-size: var(--text-journey-answer); line-height: 1.2; font-weight: 700; box-shadow: var(--shadow-journey); animation: var(--animate-journey-reveal); }
+.journey-ask-row { display: flex; justify-content: flex-end; }
+
+.journey-paused { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--color-journey-night) 55%, transparent); cursor: pointer; }
+.journey-paused-card { display: flex; flex-direction: column; align-items: center; gap: 0.4em; padding: calc(var(--spacing-journey-gap) * 1.5) calc(var(--spacing-journey-gap) * 3); animation: var(--animate-journey-pop); }
+.journey-error { position: absolute; inset-inline: 0; bottom: 30%; margin-inline: auto; width: fit-content; padding: 0.6em 1em; background: var(--color-journey-night); border: var(--spacing-journey-border) solid var(--color-journey-cream); font-size: var(--text-journey-small); }

@@ -3,7 +3,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { motion } from "motion/react";
 import { memo } from "react";
-import { giftColor, type Expression, type WorkerGift } from "@/features/storybook/cast";
+import { type Expression, type WorkerGift } from "@/features/storybook/cast";
 import { Token } from "@/features/storybook/art/Token";
 import { readNumberToken as timing } from "@/lib/tokens";
 import type { Worker } from "./content";
@@ -35,10 +35,9 @@ const Card = memo(function Card({ worker, index, face, placed, selected, locked,
         disabled={placed || locked}
         aria-pressed={selected}
         aria-label={`${worker.name}. ${worker.can}.`}
-        className={`grid w-full touch-none grid-cols-1 justify-items-center gap-x-story-gap gap-y-1 rounded-story border-3 border-l-8 border-ink bg-paper p-story-gap text-center shadow-story transition-transform disabled:cursor-default @3xl:grid-cols-[auto_1fr] @3xl:justify-items-start @3xl:text-left ${
+        className={`grid w-full touch-none grid-cols-1 justify-items-center gap-x-story-gap gap-y-1 rounded-story border-3 border-ink bg-paper p-story-gap text-center shadow-story transition-transform disabled:cursor-default @3xl:grid-cols-[auto_1fr] @3xl:justify-items-start @3xl:text-left ${
           selected ? "scale-105 bg-wash ring-4 ring-ink" : "hover:-translate-y-0.5"
         }`}
-        style={{ borderLeftColor: giftColor(worker.gift) }}
       >
         <span className="relative aspect-square w-strip-token @3xl:row-span-2">
           {placed ? (

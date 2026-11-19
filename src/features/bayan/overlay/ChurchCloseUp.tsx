@@ -81,14 +81,14 @@ export function ChurchCloseUp({ session, content, sheet }: ChurchCloseUpProps) {
                     state === "dark" ? "border-dashed border-ink/30 text-muted" : "border-ink"
                   } ${state === "new" ? "animate-pop-in bg-gold" : state === "lit" ? "bg-gold/25" : ""}`}
                 >
-                  <span className="pixel text-game-small uppercase tracking-label">{title}</span>
+                  <span className="pixel text-game-small tracking-label">{title}</span>
                   <span className="text-game font-semibold">{state === "dark" ? "?" : who}</span>
                 </li>
               );
             })}
           </ol>
         </div>
-        <h2 className="pixel text-game-title lowercase">{caption.title}</h2>
+        <h2 className="pixel text-game-title">{caption.title}</h2>
         <p className="text-game font-medium">{caption.body}</p>
         <div className="flex justify-end">
           <button ref={button} type="button" onClick={() => session.director.closeCloseUp()} className={actionButton}>

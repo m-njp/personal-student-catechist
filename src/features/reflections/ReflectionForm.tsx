@@ -27,6 +27,7 @@ export function ReflectionForm({ lessonId, prompt, starters }: ReflectionFormPro
 
   function addStarter(starter: string) {
     const next = content.trim() ? `${content.trimEnd()}\n${starter} ` : `${starter} `;
+    if (next.length > REFLECTION_LIMITS.contentMax) return;
     setContent(next);
     // Put the cursor at the end so the pupil can keep typing.
     requestAnimationFrame(() => {
@@ -52,7 +53,7 @@ export function ReflectionForm({ lessonId, prompt, starters }: ReflectionFormPro
   if (status.kind === "saved") {
     return (
       <div className="animate-rise-in rounded-2xl border border-hairline p-6 sm:p-8">
-        <p className="pixel text-2xl lowercase">thank you</p>
+        <p className="pixel text-2xl">Thank you</p>
         <p className="mt-2 text-muted">Your reflection is saved.</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button
@@ -109,8 +110,9 @@ export function ReflectionForm({ lessonId, prompt, starters }: ReflectionFormPro
               <button
                 key={starter}
                 type="button"
+                disabled={(content.trim() ? content.trimEnd().length + 1 : 0) + starter.length + 1 > REFLECTION_LIMITS.contentMax}
                 onClick={() => addStarter(starter)}
-                className="min-h-11 rounded-full border border-hairline px-4 text-left text-sm text-muted transition-colors hover:border-gold hover:text-ink"
+                className="min-h-11 rounded-full border border-hairline px-4 text-left text-sm text-muted transition-colors hover:border-gold hover:text-ink disabled:cursor-default disabled:opacity-40"
               >
                 {starter}...
               </button>

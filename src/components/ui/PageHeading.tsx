@@ -8,8 +8,8 @@ interface PageHeadingProps {
 export function PageHeading({ eyebrow, title, intro }: PageHeadingProps) {
   return (
     <header className="mb-8">
-      <p className="text-xs uppercase tracking-label text-muted">{eyebrow}</p>
-      <h1 className="pixel mt-2 text-display lowercase">{title}</h1>
+      <p className="text-xs tracking-label text-muted">{eyebrow}</p>
+      <h1 className="pixel mt-2 text-display">{title}</h1>
       {intro && <p className="mt-2 max-w-xl text-muted">{intro}</p>}
     </header>
   );

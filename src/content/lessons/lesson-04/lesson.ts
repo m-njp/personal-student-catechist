@@ -11,6 +11,7 @@ export const lesson04 = new Lesson({
   title: "The Church Shares the Good News to All People",
   theme: "The Church is catholic. She is sent to all people.",
   reflectionPrompt: "How can I be a young missionary this week?",
+  canWriteReflection: false,
   reflectionStarters: ["I can share the Good News by", "I will help"],
   activities: [
     new GreetActivity({

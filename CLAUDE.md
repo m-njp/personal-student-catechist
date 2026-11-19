@@ -13,6 +13,7 @@ A small classroom website for Grade 5 Christian Living, shown on an LED TV from 
 - `docs/workflow.md`: branches, commits, checks, releases, and Windows problems
 - `tools/bayan-art/README.md`: the scripts that draw Lesson 02's maps, sprites, and sounds
 - `tools/greet-art/README.md`: how Lesson 04's camera models are fetched, and its sounds and music made
+- `tools/journey-art/README.md`: the scripts that draw Lesson 05's journey and make its sounds
 
 Keep docs short and stable. Describe how and why, not current values that the code already shows. Update a doc only when a rule or a how-to changes.
 
@@ -45,7 +46,7 @@ npm run check      # all of the above, in order
 - Mobile first. Check every change at 375px wide and at laptop width.
 - Tap targets are at least 44px.
 - No gradients, divider lines, middots, em dashes, or emoji, in UI text or docs.
-- Headings on the site's own pages are lowercase. Games from Lesson 04 on use the capitalization their content is written in, and each game has its own fonts, buttons, and motion. Instructions fit in one or two lines.
+- Use proper capitalization throughout the UI, including headings, dropdowns, questions, and dialogue. Use sentence case, preserve proper names and game titles, and never force case with CSS. No decorative accent bars. Each game has its own fonts, buttons, and motion. Instructions fit in one or two lines.
 
 ## Git
 

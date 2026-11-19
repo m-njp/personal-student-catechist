@@ -81,7 +81,7 @@ export function TeacherPanel({ session }: { session: BayanSession }) {
       </button>
       {open && (
         <div className="absolute right-0 top-full z-10 mt-2 flex w-64 animate-pop-in flex-col gap-1 rounded-2xl border-2 border-ink bg-paper p-2 shadow-game">
-          <p className="px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted">Teacher</p>
+          <p className="px-3 pb-1 pt-2 text-xs tracking-label text-muted">Teacher</p>
           <Toggle
             label="Music"
             on={music}
@@ -94,7 +94,7 @@ export function TeacherPanel({ session }: { session: BayanSession }) {
             onChange={() => session.saved.setState({ sounds: !sounds })}
             icon={sounds ? <Volume2 aria-hidden className="size-4" /> : <VolumeX aria-hidden className="size-4" />}
           />
-          <p className="px-3 pb-1 pt-2 text-xs uppercase tracking-label text-muted">Go to stage</p>
+          <p className="px-3 pb-1 pt-2 text-xs tracking-label text-muted">Go to stage</p>
           <div className="grid grid-cols-5 gap-1 px-1">
             {STAGES.map((s) => (
               <button
