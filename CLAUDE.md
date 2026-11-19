@@ -13,6 +13,7 @@ A small classroom website for Grade 5 Christian Living, shown on an LED TV from 
 - `docs/workflow.md`: branches, commits, checks, releases, and Windows problems
 - `tools/bayan-art/README.md`: the scripts that draw Lesson 02's maps, sprites, and sounds
 - `tools/greet-art/README.md`: how Lesson 04's camera models are fetched, and its sounds and music made
+- `tools/journey-art/README.md`: the scripts that draw Lesson 05's journey and make its sounds
 
 Keep docs short and stable. Describe how and why, not current values that the code already shows. Update a doc only when a rule or a how-to changes.
 

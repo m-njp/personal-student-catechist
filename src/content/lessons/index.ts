@@ -3,6 +3,7 @@ import { lesson01 } from "./lesson-01/lesson";
 import { lesson02 } from "./lesson-02/lesson";
 import { lesson03 } from "./lesson-03/lesson";
 import { lesson04 } from "./lesson-04/lesson";
+import { lesson05 } from "./lesson-05/lesson";
 
 /** Every lesson, in teaching order. Add one line per new lesson. */
 export const lessons: readonly Lesson[] = [
@@ -10,6 +11,7 @@ export const lessons: readonly Lesson[] = [
   lesson02,
   lesson03,
   lesson04,
+  lesson05,
 ];
 
 export function getLesson(id: string): Lesson | undefined {

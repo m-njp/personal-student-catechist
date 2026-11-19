@@ -21,6 +21,7 @@ Every color, size, shadow, and timing lives in `src/app/globals.css`. Never writ
 | The wall's question | Geist Mono (`font-mono`) |
 | Reflection text | Sentient (`font-serif`) |
 | Lesson 03's games | Baloo 2 (`font-story`) and Atkinson Hyperlegible (`font-story-body`), loaded from Google Fonts and set only on the games' frame |
+| Lesson 05's journey | Pixelify Sans (`font-journey`), self hosted by Next at build time and set only on the game's frame |
 
 The self-hosted font files and licenses are in `src/styles/fonts/`.
 
@@ -102,6 +103,20 @@ A camera quiz. One group sends one player per turn. The player stands in the cen
 - The models run in video mode, so a hand is followed from its last place. Searching each frame from scratch (image mode) lost far, tilted, and downward hands.
 - The player is found by standing still in the center, and followed by position and body size; ambiguous matches pause camera answers. After a loss, only the same clothing color, kept in memory, brings them back. A standing outline guides them there without expiring the lock. Find player again deliberately clears it and the face calibration.
 - No picture or landmark leaves the laptop. Only scores and settings are saved, on this laptop.
+
+## A Journey to Remember (Lesson 05)
+
+A side view walk drawn on one canvas, in its own pixel style: larger figures, hue shifted shading, and soft colored outlines. Every word is drawn by React over the canvas, except short speech bubbles and road signs, which the canvas draws at token sizes.
+
+- Who does what: `Journey` holds the rules (phases, side quests, timing, which sounds play when), `route.ts` holds where everything is and each replay's choreography, the renderer only draws, and the hook plays the sounds. Nothing is saved: each showing starts fresh, and nothing is fetched from outside the site.
+- The presenter leads. Space, Enter, or a click moves the story on; the corner buttons never keep focus after a click, so Space always means move on. There are no on screen hints.
+- A memory is a flashback: a flash, a whoosh, and dithered dark corners while it replays. Memories not reached yet show faded, like old photographs.
+- A right answer is a celebration: a stamp of the answer, a fanfare, confetti, and everyone in the memory cheering.
+- The road is never empty. Side quests pause the walk briefly (Lola greets, a ball comes back, a dog joins, a garland is offered, the jeepney pulls in at the plaza), and townsfolk, animals, and vendors keep moving on their own.
+- Everything has a reason to be where it is. A side quest sits on open road between memories, never over one. Vendors gather at the Church plaza, where they would be in a real town, and the jeepney that drops Lola and Lolo at the Church stays parked there for the fiesta.
+- Buildings are near life size: an adult is about 50 pixels tall, so a door is about 45 and a floor about 50.
+- The ending holds on the Church: bells, bunting, doves, confetti, and fireworks, then everyone stays together while the catechist asks the closing question aloud.
+- The art and sounds come from `tools/journey-art`. Change a script and run it.
 
 ## Performance
 
